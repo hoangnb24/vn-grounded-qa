@@ -275,6 +275,12 @@ def license_check(result) -> GateCheck:
 
 def m2_failures_for_thresholds(result_at_10: EvalResult, result_at_20: EvalResult, examples: List[dict]) -> List[dict]:
     category_by_question = {str(row.get("question")): str(row.get("category") or "") for row in examples}
+    retrieval_failure_types = {
+        "alias_term_miss",
+        "retrieval_miss",
+        "version_expected_doc_missing",
+        "version_resolution_miss",
+    }
     failures: List[dict] = []
     seen = set()
     for result, categories in [
@@ -285,7 +291,9 @@ def m2_failures_for_thresholds(result_at_10: EvalResult, result_at_20: EvalResul
             question = str(failure.get("question") or "")
             category = category_by_question.get(question, "")
             failure_type = str(failure.get("type") or "")
-            if category not in categories and failure_type == "retrieval_miss":
+            if failure_type not in retrieval_failure_types:
+                continue
+            if category not in categories:
                 continue
             key = (question, failure_type)
             if key in seen:

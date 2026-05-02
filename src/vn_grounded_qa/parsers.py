@@ -235,7 +235,14 @@ def parse_markdown_text(path: Path, data: bytes, text: str, parser_name: str) ->
         flush_table()
         flush_list()
 
-    for line in text.splitlines():
+    lines = text.splitlines()
+    if lines and lines[0].strip() == "---":
+        for index, line in enumerate(lines[1:], start=1):
+            if line.strip() == "---":
+                lines = lines[index + 1 :]
+                break
+
+    for line in lines:
         if line.lstrip().startswith("```"):
             if in_code:
                 flush_code()

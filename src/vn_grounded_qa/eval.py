@@ -11,6 +11,7 @@ from typing import Dict, Iterable, List, Mapping, Optional
 
 from .answer import answer_question
 from .contracts import load_answer_contract_schema, validate_answer_contract
+from .normalize import identifier_variants
 from .store import GroundedStore
 from .tools import ToolSession
 
@@ -287,6 +288,9 @@ def run_eval(store: GroundedStore, examples: Iterable[Dict[str, object]], k: int
         disallowed_answer = [str(item).lower() for item in row.get("disallowed_answer_points") or []]
         expected_doc_id = str(row.get("expected_doc_id") or "").strip()
         as_of = str(row.get("as_of") or "").strip()
+        retrieval_expected_docs = set(expected_docs)
+        if expected_doc_id and (expected_units or expected_text or not as_of):
+            retrieval_expected_docs.add(expected_doc_id)
         expect_insufficient = bool(row.get("insufficient_evidence", False))
         if aliases_or_terms:
             resolved_terms = set(store.resolve_terms(question))
@@ -309,17 +313,19 @@ def run_eval(store: GroundedStore, examples: Iterable[Dict[str, object]], k: int
                             "resolved_doc_id": None if resolved is None else str(resolved["doc_id"]),
                         }
                     )
-        if expected_units or expected_text:
+        if expected_units or expected_text or retrieval_expected_docs:
             retrieval_total += 1
             retrieval_by_category[category] = retrieval_by_category.get(category, 0) + 1
             start = time.perf_counter()
             hits = store.search_units(question, top_k=k)
             hit_ids = {hit.unit_id for hit in hits}
-            hit_text = "\n".join(hit.raw_text.lower() for hit in hits)
+            hit_doc_ids = {hit.doc_id for hit in hits}
+            hit_text = "\n".join(" ".join([*identifier_variants(hit.doc_id), hit.title, hit.heading_path, hit.raw_text]).lower() for hit in hits)
             search_latencies_ms.append((time.perf_counter() - start) * 1000)
             unit_match = bool(expected_units and hit_ids.intersection(expected_units))
             text_match = bool(expected_text and all(fragment in hit_text for fragment in expected_text))
-            if unit_match or text_match:
+            doc_match = bool(retrieval_expected_docs and retrieval_expected_docs.issubset(hit_doc_ids))
+            if unit_match or text_match or doc_match:
                 retrieval_hits += 1
                 retrieval_hits_by_category[category] = retrieval_hits_by_category.get(category, 0) + 1
             else:
@@ -329,7 +335,9 @@ def run_eval(store: GroundedStore, examples: Iterable[Dict[str, object]], k: int
                         "type": "retrieval_miss",
                         "expected_unit_ids": sorted(expected_units),
                         "expected_text_contains": expected_text,
+                        "expected_doc_ids": sorted(retrieval_expected_docs),
                         "hit_unit_ids": sorted(hit_ids),
+                        "hit_doc_ids": sorted(hit_doc_ids),
                     }
                 )
         if expect_insufficient:

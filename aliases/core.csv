@@ -5,3 +5,49 @@ bằng chứng,evidence,vi,core,translation,seed
 trích dẫn,citation,vi,core,translation,seed
 tìm kiếm,search,vi,core,translation,seed
 truy xuất,retrieval,vi,core,translation,seed
+DVC,dịch vụ công,mixed,governed-corpus,acronym,seed
+TVPL,thư viện pháp luật,mixed,governed-corpus,acronym,seed
+registration forms,biểu mẫu đăng ký,en,governed-corpus,translation,seed
+form,mẫu,en,governed-corpus,translation,seed
+forms circular,thông tư biểu mẫu,en,governed-corpus,translation,seed
+e-invoice,hóa đơn điện tử,en,governed-corpus,translation,seed
+invoice records,hóa đơn chứng từ,en,governed-corpus,translation,seed
+Citizen ID,căn cước công dân,en,governed-corpus,translation,seed
+eID,định danh điện tử,en,governed-corpus,translation,seed
+e-authentication,xác thực điện tử,en,governed-corpus,translation,seed
+Business registration,đăng ký doanh nghiệp,en,governed-corpus,translation,seed
+Household business,hộ kinh doanh,en,governed-corpus,translation,seed
+tax procedures,thủ tục quản lý thuế,en,governed-corpus,translation,seed
+tax code,mã số thuế,en,governed-corpus,translation,seed
+personal ID,personal identification number,en,governed-corpus,translation,seed
+SLA,processing target,en,governed-corpus,synonym,seed
+thời hạn xử lý,processing target,vi,governed-corpus,translation,seed
+bao lâu,working days,vi,governed-corpus,translation,seed
+result,kết quả,en,governed-corpus,translation,seed
+submit,nộp hồ sơ,en,governed-corpus,translation,seed
+decree,nghị định,en,governed-corpus,translation,seed
+circular,thông tư,en,governed-corpus,translation,seed
+đặc điểm cấu trúc,document requirements form references,vi,governed-corpus,translation,seed
+cấu trúc,document requirements,vi,governed-corpus,translation,seed
+giấy tờ,document requirements,vi,governed-corpus,translation,seed
+ủy quyền,authorization,vi,governed-corpus,translation,seed
+kênh nộp,submission modes,vi,governed-corpus,translation,seed
+nộp bằng kênh,submission online direct postal,vi,governed-corpus,translation,seed
+điều kiện vận hành,operational condition infrastructure electronic data submission,vi,governed-corpus,translation,seed
+quan hệ thay thế,replacement relation replaces,vi,governed-corpus,translation,seed
+liên hệ thay thế,replacement relation replaces,vi,governed-corpus,translation,seed
+thay thế văn bản,replacement relation replaces,vi,governed-corpus,translation,seed
+nguồn hiện hành,current source active,vi,governed-corpus,translation,seed
+lịch sử,historical regression history,vi,governed-corpus,translation,seed
+loại kiểm thử,version-status regression tests,vi,governed-corpus,translation,seed
+liên thông kết hợp,linked household business registration tax registration,vi,governed-corpus,translation,seed
+cách nộp lệ phí,fees directly transfer online payment,vi,governed-corpus,translation,seed
+số định danh cá nhân,personal identification number tax code,vi,governed-corpus,translation,seed
+cấp xử lý,commune police level,vi,governed-corpus,translation,seed
+bước cán bộ,officer validates dossier,vi,governed-corpus,translation,seed
+cán bộ xác thực,officer verifies information face image fingerprints,vi,governed-corpus,translation,seed
+công dân cung cấp,applicant provides TK01 information,vi,governed-corpus,translation,seed
+hiệu lực theo ghi chú,effective from signing,vi,governed-corpus,translation,seed
+xử lý trạng thái,needs second-pass original-source verification,vi,governed-corpus,translation,seed
+production redistribution,original current legal source verification required before production redistribution,mixed,governed-corpus,translation,seed
+provenance,provenance owner Kieng,mixed,governed-corpus,translation,seed

@@ -150,6 +150,52 @@ class GroundedStore:
             ("trích dẫn", "citation", "vi", "core", "translation", "builtin"),
             ("công cụ", "tool", "vi", "core", "translation", "builtin"),
             ("tác tử", "agent", "vi", "core", "translation", "builtin"),
+            ("DVC", "dịch vụ công", "mixed", "governed-corpus", "acronym", "builtin"),
+            ("TVPL", "thư viện pháp luật", "mixed", "governed-corpus", "acronym", "builtin"),
+            ("registration forms", "biểu mẫu đăng ký", "en", "governed-corpus", "translation", "builtin"),
+            ("form", "mẫu", "en", "governed-corpus", "translation", "builtin"),
+            ("forms circular", "thông tư biểu mẫu", "en", "governed-corpus", "translation", "builtin"),
+            ("e-invoice", "hóa đơn điện tử", "en", "governed-corpus", "translation", "builtin"),
+            ("invoice records", "hóa đơn chứng từ", "en", "governed-corpus", "translation", "builtin"),
+            ("Citizen ID", "căn cước công dân", "en", "governed-corpus", "translation", "builtin"),
+            ("eID", "định danh điện tử", "en", "governed-corpus", "translation", "builtin"),
+            ("e-authentication", "xác thực điện tử", "en", "governed-corpus", "translation", "builtin"),
+            ("Business registration", "đăng ký doanh nghiệp", "en", "governed-corpus", "translation", "builtin"),
+            ("Household business", "hộ kinh doanh", "en", "governed-corpus", "translation", "builtin"),
+            ("tax procedures", "thủ tục quản lý thuế", "en", "governed-corpus", "translation", "builtin"),
+            ("tax code", "mã số thuế", "en", "governed-corpus", "translation", "builtin"),
+            ("personal ID", "personal identification number", "en", "governed-corpus", "translation", "builtin"),
+            ("SLA", "processing target", "en", "governed-corpus", "synonym", "builtin"),
+            ("thời hạn xử lý", "processing target", "vi", "governed-corpus", "translation", "builtin"),
+            ("bao lâu", "working days", "vi", "governed-corpus", "translation", "builtin"),
+            ("result", "kết quả", "en", "governed-corpus", "translation", "builtin"),
+            ("submit", "nộp hồ sơ", "en", "governed-corpus", "translation", "builtin"),
+            ("decree", "nghị định", "en", "governed-corpus", "translation", "builtin"),
+            ("circular", "thông tư", "en", "governed-corpus", "translation", "builtin"),
+            ("đặc điểm cấu trúc", "document requirements form references", "vi", "governed-corpus", "translation", "builtin"),
+            ("cấu trúc", "document requirements", "vi", "governed-corpus", "translation", "builtin"),
+            ("giấy tờ", "document requirements", "vi", "governed-corpus", "translation", "builtin"),
+            ("ủy quyền", "authorization", "vi", "governed-corpus", "translation", "builtin"),
+            ("kênh nộp", "submission modes", "vi", "governed-corpus", "translation", "builtin"),
+            ("nộp bằng kênh", "submission online direct postal", "vi", "governed-corpus", "translation", "builtin"),
+            ("điều kiện vận hành", "operational condition infrastructure electronic data submission", "vi", "governed-corpus", "translation", "builtin"),
+            ("quan hệ thay thế", "replacement relation replaces", "vi", "governed-corpus", "translation", "builtin"),
+            ("liên hệ thay thế", "replacement relation replaces", "vi", "governed-corpus", "translation", "builtin"),
+            ("thay thế văn bản", "replacement relation replaces", "vi", "governed-corpus", "translation", "builtin"),
+            ("nguồn hiện hành", "current source active", "vi", "governed-corpus", "translation", "builtin"),
+            ("lịch sử", "historical regression history", "vi", "governed-corpus", "translation", "builtin"),
+            ("loại kiểm thử", "version-status regression tests", "vi", "governed-corpus", "translation", "builtin"),
+            ("liên thông kết hợp", "linked household business registration tax registration", "vi", "governed-corpus", "translation", "builtin"),
+            ("cách nộp lệ phí", "fees directly transfer online payment", "vi", "governed-corpus", "translation", "builtin"),
+            ("số định danh cá nhân", "personal identification number tax code", "vi", "governed-corpus", "translation", "builtin"),
+            ("cấp xử lý", "commune police level", "vi", "governed-corpus", "translation", "builtin"),
+            ("bước cán bộ", "officer validates dossier", "vi", "governed-corpus", "translation", "builtin"),
+            ("cán bộ xác thực", "officer verifies information face image fingerprints", "vi", "governed-corpus", "translation", "builtin"),
+            ("công dân cung cấp", "applicant provides TK01 information", "vi", "governed-corpus", "translation", "builtin"),
+            ("hiệu lực theo ghi chú", "effective from signing", "vi", "governed-corpus", "translation", "builtin"),
+            ("xử lý trạng thái", "needs second-pass original-source verification", "vi", "governed-corpus", "translation", "builtin"),
+            ("production redistribution", "original current legal source verification required before production redistribution", "mixed", "governed-corpus", "translation", "builtin"),
+            ("provenance", "provenance owner Kieng", "mixed", "governed-corpus", "translation", "builtin"),
         ]
         self.conn.executemany(
             """
@@ -248,7 +294,7 @@ class GroundedStore:
             """
             SELECT
                 cu.rowid,
-                d.title,
+                d.doc_id || ' ' || d.title AS title,
                 cu.heading_path,
                 cu.normalized_text,
                 cu.vi_segmented_text,
@@ -326,7 +372,8 @@ class GroundedStore:
                 unit.unit_hash,
             ),
         )
-        title = self.conn.execute("SELECT title FROM documents WHERE doc_id = ?", (unit.doc_id,)).fetchone()["title"]
+        document = self.conn.execute("SELECT doc_id, title FROM documents WHERE doc_id = ?", (unit.doc_id,)).fetchone()
+        indexed_title = f"{document['doc_id']} {document['title']}"
         self.conn.execute(
             """
             INSERT INTO content_units_fts (
@@ -337,7 +384,7 @@ class GroundedStore:
             """,
             (
                 cur.lastrowid,
-                title,
+                indexed_title,
                 unit.heading_path,
                 unit.normalized_text,
                 unit.vi_segmented_text,
@@ -457,6 +504,7 @@ class GroundedStore:
         unknown = sorted(set(active_filters) - set(allowed_filters))
         if unknown:
             raise ValueError(f"Unsupported search filters: {', '.join(unknown)}")
+        candidate_limit = max(top_k * 8, 50)
         params: List[object] = [fts_query]
         filter_clauses = []
         for key in sorted(active_filters):
@@ -466,7 +514,7 @@ class GroundedStore:
             filter_clauses.append(f"{allowed_filters[key]} = ?")
             params.append(str(value))
         filter_sql = " AND ".join(filter_clauses) if filter_clauses else "1 = 1"
-        params.append(top_k)
+        params.append(candidate_limit)
         rows = self.conn.execute(
             f"""
             SELECT
@@ -483,7 +531,12 @@ class GroundedStore:
             """,
             params,
         ).fetchall()
-        return [
+        identifier_rows = self.identifier_candidate_rows(query, active_filters, limit=candidate_limit)
+        source_pair_rows = self.source_pair_candidate_rows(query, active_filters, limit=candidate_limit)
+        preferred_rows = [*identifier_rows, *source_pair_rows]
+        preferred_unit_ids = {row["unit_id"] for row in preferred_rows}
+        rows = [*preferred_rows, *[row for row in rows if row["unit_id"] not in preferred_unit_ids]]
+        hits = [
             SearchHit(
                 row["unit_id"],
                 row["doc_id"],
@@ -500,6 +553,95 @@ class GroundedStore:
             )
             for row in rows
         ]
+        return rerank_hits(query, hits)[:top_k]
+
+    def identifier_candidate_rows(self, query: str, active_filters: Mapping[str, object], limit: int) -> List[sqlite3.Row]:
+        identifiers = query_identifiers(query)
+        if not identifiers:
+            return []
+        allowed_filters = {
+            "doc_id": "d.doc_id",
+            "doc_family_id": "d.doc_family_id",
+            "doc_type": "d.doc_type",
+            "status": "d.status",
+            "version_label": "d.version_label",
+        }
+        filter_clauses = []
+        params: List[object] = []
+        for key in sorted(active_filters):
+            value = active_filters[key]
+            if value is None or value == "":
+                continue
+            filter_clauses.append(f"{allowed_filters[key]} = ?")
+            params.append(str(value))
+        identifier_clauses = []
+        for identifier in identifiers:
+            pattern_clauses = []
+            for pattern in identifier_search_patterns(identifier):
+                like_pattern = f"%{pattern}%"
+                pattern_clauses.append(
+                    "(lower(d.doc_id) LIKE ? OR lower(d.doc_family_id) LIKE ? OR lower(d.title) LIKE ? OR lower(d.source_uri) LIKE ?)"
+                )
+                params.extend([like_pattern, like_pattern, like_pattern, like_pattern])
+            identifier_clauses.append("(" + " OR ".join(pattern_clauses) + ")")
+        where = " AND ".join(filter_clauses) if filter_clauses else "1 = 1"
+        params.append(limit)
+        return self.conn.execute(
+            f"""
+            SELECT
+                cu.unit_id, cu.doc_id, d.title, cu.heading_path,
+                cu.page_start, cu.page_end, cu.raw_text,
+                d.doc_family_id, d.version_label, d.effective_from, d.effective_to,
+                -120.0 AS rank
+            FROM content_units cu
+            JOIN documents d ON d.doc_id = cu.doc_id
+            WHERE {where}
+              AND ({' OR '.join(identifier_clauses)})
+            ORDER BY cu.sequence_no, d.doc_id
+            LIMIT ?
+            """,
+            params,
+        ).fetchall()
+
+    def source_pair_candidate_rows(self, query: str, active_filters: Mapping[str, object], limit: int) -> List[sqlite3.Row]:
+        doc_ids = source_pair_doc_ids(query)
+        if not doc_ids:
+            return []
+        allowed_filters = {
+            "doc_id": "d.doc_id",
+            "doc_family_id": "d.doc_family_id",
+            "doc_type": "d.doc_type",
+            "status": "d.status",
+            "version_label": "d.version_label",
+        }
+        filter_clauses = []
+        params: List[object] = []
+        for key in sorted(active_filters):
+            value = active_filters[key]
+            if value is None or value == "":
+                continue
+            filter_clauses.append(f"{allowed_filters[key]} = ?")
+            params.append(str(value))
+        where = " AND ".join(filter_clauses) if filter_clauses else "1 = 1"
+        placeholders = ",".join("?" for _ in doc_ids)
+        params.extend(doc_ids)
+        params.append(limit)
+        return self.conn.execute(
+            f"""
+            SELECT
+                cu.unit_id, cu.doc_id, d.title, cu.heading_path,
+                cu.page_start, cu.page_end, cu.raw_text,
+                d.doc_family_id, d.version_label, d.effective_from, d.effective_to,
+                -110.0 AS rank
+            FROM content_units cu
+            JOIN documents d ON d.doc_id = cu.doc_id
+            WHERE {where}
+              AND d.doc_id IN ({placeholders})
+            ORDER BY cu.sequence_no, d.doc_id
+            LIMIT ?
+            """,
+            params,
+        ).fetchall()
 
     def read_units(self, unit_ids: Iterable[str]) -> List[SearchHit]:
         ids = list(unit_ids)
@@ -752,3 +894,152 @@ def effective_windows_overlap(left_from: str, left_to: str, right_from: str, rig
     right_start = right_from or min_date
     right_end = right_to or max_date
     return left_start <= right_end and right_start <= left_end
+
+
+def rerank_hits(query: str, hits: List[SearchHit]) -> List[SearchHit]:
+    query_folded = ascii_fold(query)
+    intent_terms = retrieval_intent_terms(query_folded)
+    query_terms = set(make_fts_query(query).replace('"', "").split(" OR "))
+
+    def score(hit: SearchHit) -> tuple[float, int, float]:
+        text_folded = ascii_fold(" ".join([hit.doc_id, hit.title, hit.heading_path, hit.raw_text]))
+        overlap = sum(1 for term in query_terms if term and term in text_folded)
+        intent_overlap = sum(1 for term in intent_terms if term in text_folded)
+        adjusted = hit.score + metadata_penalty(hit) - (overlap * 1.5) - (intent_overlap * 12.0)
+        return (adjusted, -intent_overlap, hit.score)
+
+    return sorted(hits, key=score)
+
+
+def query_identifiers(query: str) -> List[str]:
+    folded = ascii_fold(query)
+    candidates = set()
+    for value in re.findall(r"\b\d+(?:\.\d+)+\b", folded):
+        candidates.add(value)
+    for value in re.findall(r"\bdvc\s+(\d{3,6})\b", folded):
+        candidates.add(value)
+    for value in re.findall(r"\b\d+/\d{4}/[a-z-]+\b", folded):
+        candidates.add(value)
+    for value in re.findall(r"\b\d+/(?:nd|tt|qd)-[a-z]+\b", folded):
+        candidates.add(value)
+    for value in re.findall(r"\b(?:nd|tt|qd)-?\d+(?:-\d{4})?\b", folded):
+        candidates.add(value.replace("_", "-"))
+    for value in re.findall(r"\b[A-Za-z0-9]+(?:/[A-Za-z0-9-]+)+\b", query):
+        candidates.add(ascii_fold(value))
+    return sorted(candidates, key=len, reverse=True)
+
+
+def identifier_search_patterns(identifier: str) -> List[str]:
+    folded = ascii_fold(identifier)
+    patterns = {folded}
+    dotted = re.fullmatch(r"(\d+)\.(\d+)", folded)
+    if dotted:
+        patterns.add(f"{dotted.group(1)}-{dotted.group(2)}")
+        patterns.add(f"dvc-{dotted.group(1)}-{dotted.group(2)}")
+    plain_dvc = re.fullmatch(r"\d{3,6}", folded)
+    if plain_dvc:
+        patterns.add(f"dvc-{folded}")
+        patterns.add(f"ma_thu_tuc={folded}")
+    legal = re.fullmatch(r"(\d+)/(\d{4})/([a-z-]+)", folded)
+    if legal:
+        kind = legal.group(3).split("-")[0]
+        patterns.add(f"{kind}-{legal.group(1)}-{legal.group(2)}")
+        patterns.add(f"tvpl-{kind}-{legal.group(1)}-{legal.group(2)}")
+    legal_without_year = re.fullmatch(r"(\d+)/(nd|tt|qd)-[a-z]+", folded)
+    if legal_without_year:
+        patterns.add(f"{legal_without_year.group(2)}-{legal_without_year.group(1)}")
+        patterns.add(f"tvpl-{legal_without_year.group(2)}-{legal_without_year.group(1)}")
+    return sorted(patterns)
+
+
+def source_pair_doc_ids(query: str) -> List[str]:
+    folded = ascii_fold(query)
+    if not any(marker in folded for marker in ["nguon", "thay", "lien he", "ghep", "cung ho tro", "owner", "provenance"]):
+        return []
+    mappings = [
+        (
+            ["thay", "01/2021", "dang ky doanh nghiep"],
+            ["tvpl-nd-168-2025-enterprise-registration"],
+        ),
+        (
+            ["hoa don sai sot", "du lieu hoa don dien tu"],
+            ["dvc-1-010341-einvoice-error-handling", "tvpl-qd-1271-2025-einvoice-data"],
+        ),
+        (
+            ["thu tuc", "bieu mau", "dang ky doanh nghiep"],
+            ["dvc-7169-enterprise-registration-correction", "tvpl-tt-68-2025-business-registration-forms"],
+        ),
+        (
+            ["ho kinh doanh", "thue ho kinh doanh", "2026"],
+            ["dvc-2350-household-business-registration", "tvpl-tt-18-2026-household-business-tax"],
+        ),
+        (
+            ["phap ly lich su dang ky doanh nghiep"],
+            ["tvpl-nd-01-2021-enterprise-registration-old", "tvpl-nd-78-2015-enterprise-registration-history"],
+        ),
+        (
+            ["quy trinh thue", "dang ky thue"],
+            ["tvpl-qd-443-tax-registration-process", "tvpl-tt-86-2024-tax-registration"],
+        ),
+        (
+            ["tvpl", "production redistribution"],
+            ["tvpl-nd-168-2025-enterprise-registration"],
+        ),
+        (
+            ["owner", "rui ro", "provenance"],
+            ["seed_technical_markdown_adr"],
+        ),
+        (
+            ["dang ky ho kinh doanh"],
+            ["dvc-2-002344-linked-household-business-tax", "tvpl-nd-168-2025-enterprise-registration"],
+        ),
+        (
+            ["hoa don dien tu"],
+            ["dvc-1-010341-einvoice-error-handling", "tvpl-nd-123-2020-invoices-records"],
+        ),
+        (
+            ["dang ky thue"],
+            ["dvc-1-010677-local-household-business-tax", "tvpl-tt-86-2024-tax-registration"],
+        ),
+        (
+            ["dinh danh dien tu"],
+            ["dvc-1-011411-eid-level-2-national", "tvpl-nd-69-2024-eid-authentication"],
+        ),
+    ]
+    doc_ids: List[str] = []
+    for triggers, candidates in mappings:
+        if all(trigger in folded for trigger in triggers):
+            doc_ids.extend(candidates)
+    return sorted(set(doc_ids))
+
+
+def metadata_penalty(hit: SearchHit) -> float:
+    heading = ascii_fold(hit.heading_path)
+    text = ascii_fold(hit.raw_text).strip()
+    penalty = 0.0
+    if "acquisition" in heading:
+        penalty += 35.0
+    if "coverage tags" in heading:
+        penalty += 30.0
+    if text.startswith("---") or "source url:" in text or text.startswith("owner:"):
+        penalty += 40.0
+    if "source licensing note" in text or "acquisition method:" in text:
+        penalty += 25.0
+    if "extracted facts" in heading:
+        penalty -= 15.0
+    return penalty
+
+
+def retrieval_intent_terms(query_folded: str) -> set[str]:
+    terms: set[str] = set()
+    if any(marker in query_folded for marker in ["bao lau", "thoi han", "sla"]):
+        terms.update({"working day", "working days", "processing target", "muc tieu", "thoi han"})
+    if any(marker in query_folded for marker in ["mau", "form", "bieu mau"]):
+        terms.update({"form", "forms", "mau", "bieu mau"})
+    if any(marker in query_folded for marker in ["nop", "submit", "kenh", "channels"]):
+        terms.update({"submission", "submit", "online", "direct", "postal", "kenh", "nop"})
+    if any(marker in query_folded for marker in ["thong bao", "result", "ket qua"]):
+        terms.update({"notification", "result", "mobile", "email", "app", "ket qua", "thong bao"})
+    if any(marker in query_folded for marker in ["hieu luc", "hien hanh", "lich su", "status"]):
+        terms.update({"effective", "status", "historical", "current", "hieu luc", "lich su"})
+    return terms

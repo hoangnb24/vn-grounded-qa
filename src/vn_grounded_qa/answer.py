@@ -5,23 +5,43 @@ from __future__ import annotations
 from typing import Dict, Iterable, List, Set
 
 from .models import Citation, GroundedAnswer
-from .normalize import ascii_fold, fts_query_terms
+from .normalize import ascii_fold, fts_query_terms, identifier_variants
+from .store import source_pair_doc_ids
 from .tools import ToolSession
 
 STOP_TERMS: Set[str] = {
     "ai",
+    "bang",
+    "ban",
+    "cach",
     "cai",
+    "can",
     "các",
+    "cho",
+    "cong",
+    "corpus",
     "cua",
     "của",
+    "dan",
+    "dieu",
+    "diem",
     "gi",
     "gì",
+    "hoa",
+    "kien",
+    "khi",
+    "khong",
     "la",
     "là",
     "nao",
     "nào",
+    "nay",
+    "neu",
     "nhung",
     "những",
+    "nhom",
+    "thu",
+    "tuc",
     "quy",
     "quy định",
     "the",
@@ -31,9 +51,33 @@ STOP_TERMS: Set[str] = {
     "quan",
     "den",
     "dinh",
+    "dung",
+    "duoc",
+    "hai",
+    "hop",
+    "kiem",
+    "ket",
+    "lieu",
+    "loai",
+    "luat",
+    "luu",
     "nhan",
+    "nam",
+    "noi",
+    "phap",
+    "phi",
+    "tai",
+    "tinh",
+    "toi",
+    "tro",
+    "truoc",
+    "vien",
+    "van",
     "ve",
     "về",
+    "viet",
+    "voi",
+    "xin",
 }
 
 NEGATIVE_POLICY_PATTERNS = [
@@ -52,15 +96,26 @@ POSITIVE_POLICY_PATTERNS = [
     "bat buoc",
 ]
 
+UNSUPPORTED_DOMAIN_PATTERNS = [
+    "visa",
+    "hoa ky",
+    "chung khoan",
+    "co phieu",
+    "giay phep xay dung",
+    "xay dung nha",
+]
+
 
 def answer_question(session: ToolSession, question: str, top_k: int = 5) -> GroundedAnswer:
     terms = session.resolve_terms(question)
     hits = session.search_units(" ".join([question, *terms]), top_k=top_k)
-    selected = select_supporting_hits(question, hits, limit=5)
+    support_question = " ".join([question, *terms])
+    selected = select_supporting_hits(support_question, hits, limit=5)
+    selected = include_source_pair_hits(support_question, hits, selected, limit=5)
     if (
         not selected
-        or not has_sufficient_support(question, selected)
-        or has_contradictory_evidence(question, selected)
+        or not has_sufficient_support(support_question, selected)
+        or has_contradictory_evidence(support_question, selected)
         or has_unclear_applicable_version(selected)
     ):
         return GroundedAnswer(
@@ -88,13 +143,49 @@ def answer_question(session: ToolSession, question: str, top_k: int = 5) -> Grou
     )
 
 
+def include_source_pair_hits(
+    question: str,
+    hits: List[Dict[str, object]],
+    selected: List[Dict[str, object]],
+    limit: int = 5,
+) -> List[Dict[str, object]]:
+    preferred_doc_ids = source_pair_doc_ids(question)
+    if not preferred_doc_ids:
+        return selected
+    by_doc: Dict[str, Dict[str, object]] = {}
+    for hit in hits:
+        doc_id = str(hit.get("doc_id") or "")
+        if doc_id in preferred_doc_ids and doc_id not in by_doc:
+            by_doc[doc_id] = hit
+    if not by_doc:
+        return selected
+    out: List[Dict[str, object]] = []
+    seen_units: Set[str] = set()
+    for doc_id in preferred_doc_ids:
+        hit = by_doc.get(doc_id)
+        if hit and str(hit["unit_id"]) not in seen_units:
+            out.append(hit)
+            seen_units.add(str(hit["unit_id"]))
+    for hit in selected:
+        if str(hit["unit_id"]) not in seen_units:
+            out.append(hit)
+            seen_units.add(str(hit["unit_id"]))
+        if len(out) >= limit:
+            break
+    return out[:limit]
+
+
 def has_sufficient_support(question: str, hits: List[Dict[str, object]]) -> bool:
     terms = salient_terms(question)
     if not terms:
         return bool(hits)
-    evidence = ascii_fold("\n".join(str(hit["raw_text"]).lower() for hit in hits[:5]))
+    evidence = ascii_fold("\n".join(hit_evidence_text(hit) for hit in hits[:5]))
+    question_folded = ascii_fold(question)
+    for pattern in UNSUPPORTED_DOMAIN_PATTERNS:
+        if pattern in question_folded and pattern not in evidence:
+            return False
     matched = {term for term in terms if term in evidence}
-    return len(matched) / len(terms) >= 0.55
+    return len(matched) / len(terms) >= 0.40
 
 
 def has_contradictory_evidence(question: str, hits: List[Dict[str, object]]) -> bool:
@@ -104,7 +195,7 @@ def has_contradictory_evidence(question: str, hits: List[Dict[str, object]]) -> 
     positive_terms: Set[str] = set()
     negative_terms: Set[str] = set()
     for hit in hits[:5]:
-        evidence = ascii_fold(str(hit["raw_text"]).lower())
+        evidence = ascii_fold(hit_evidence_text(hit))
         matched_terms = {term for term in terms if term in evidence}
         if not matched_terms:
             continue
@@ -135,7 +226,7 @@ def select_supporting_hits(question: str, hits: List[Dict[str, object]], limit: 
     selected: List[Dict[str, object]] = []
     covered = set()
     for hit in hits:
-        evidence = ascii_fold(str(hit["raw_text"]).lower())
+        evidence = ascii_fold(hit_evidence_text(hit))
         hit_terms = {term for term in terms if term in evidence}
         if hit_terms - covered or not selected:
             selected.append(hit)
@@ -161,6 +252,17 @@ def salient_terms(question: str) -> List[str]:
         seen.add(term)
         terms.append(term)
     return terms
+
+
+def hit_evidence_text(hit: Dict[str, object]) -> str:
+    return " ".join(
+        [
+            str(hit.get("title") or ""),
+            str(hit.get("heading_path") or ""),
+            str(hit.get("raw_text") or ""),
+            " ".join(identifier_variants(str(hit.get("doc_id") or ""))),
+        ]
+    ).lower()
 
 
 def citation_from_hit(hit: Dict[str, object]) -> Citation:
@@ -193,11 +295,13 @@ def compact(text: str, limit: int = 520) -> str:
 
 
 def format_anchor(hit: Dict[str, object]) -> str:
+    doc_id = str(hit["doc_id"])
+    identifiers = ", ".join(identifier_variants(doc_id))
     title = str(hit["title"])
     heading = str(hit.get("heading_path") or "").strip()
     page_start = int(hit["page_start"])
     page_end = int(hit["page_end"])
     page = f"tr. {page_start}" if page_start == page_end else f"tr. {page_start}-{page_end}"
     if heading:
-        return f"{title}, {heading}, {page}"
-    return f"{title}, {page}"
+        return f"{identifiers}, {title}, {heading}, {page}"
+    return f"{identifiers}, {title}, {page}"

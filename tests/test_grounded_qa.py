@@ -4,8 +4,9 @@ import json
 from vn_grounded_qa.answer import answer_question
 from vn_grounded_qa.cli import main
 from vn_grounded_qa.eval import estimate_query_cost, run_eval
+from vn_grounded_qa.normalize import identifier_variants
 from vn_grounded_qa.parsers import extract_glossary_terms, parse_file, parse_markdown, units_from_ir
-from vn_grounded_qa.store import GroundedStore
+from vn_grounded_qa.store import GroundedStore, identifier_search_patterns, source_pair_doc_ids
 from vn_grounded_qa.tools import ToolSession
 
 
@@ -60,6 +61,97 @@ def test_alias_expansion(tmp_path: Path) -> None:
     hits = store.search_units("duyet tren he thong quan ly nhan su", top_k=5)
     assert hits
     assert any("HRM" in hit.raw_text for hit in hits)
+
+
+def test_default_aliases_cover_governed_mixed_language_terms(tmp_path: Path) -> None:
+    store = make_store(tmp_path)
+    resolved = store.resolve_terms("Citizen ID procedure có SLA bao lâu?")
+    assert "Citizen ID" in resolved
+    assert "processing target" in resolved
+    assert "working days" in resolved
+
+
+def test_search_reranks_body_facts_above_acquisition_metadata(tmp_path: Path) -> None:
+    store = GroundedStore(tmp_path / "qa.db")
+    store.init_schema()
+    doc = tmp_path / "dvc.md"
+    doc.write_text(
+        """---
+doc_id: dvc-1
+title: Xử lý hóa đơn điện tử của cơ quan thuế có sai sót
+source_url: https://example.test/dvc?ma_thu_tuc=1.010341
+---
+
+# Xử lý hóa đơn điện tử của cơ quan thuế có sai sót
+
+## Acquisition
+
+- Source URL: https://example.test/dvc?ma_thu_tuc=1.010341
+- Owner: Kieng
+
+## Extracted Facts
+
+- Workflow covers handling erroneous tax-authority e-invoices.
+- Submission is online and processing target is one working day.
+- Representative form is 04/SS-HDDT.
+
+## Coverage Tags
+
+- governed_provenance
+""",
+        encoding="utf-8",
+    )
+    store.ingest_path(doc)
+
+    hits = store.search_units("Thủ tục xử lý hóa đơn điện tử sai sót có thời hạn xử lý bao lâu?", top_k=5)
+
+    assert any("one working day" in hit.raw_text for hit in hits)
+    assert "Acquisition" not in hits[0].heading_path
+
+
+def test_search_can_route_by_manifest_document_identifier(tmp_path: Path) -> None:
+    store = GroundedStore(tmp_path / "qa.db")
+    store.init_schema()
+    doc = tmp_path / "citizen-id.md"
+    doc.write_text("# Cấp thẻ căn cước\n\n## Extracted Facts\n\nProcessing target is seven working days.\n", encoding="utf-8")
+    manifest = tmp_path / "manifest.json"
+    manifest.write_text(
+        json.dumps(
+            {
+                "documents": [
+                    {
+                        "doc_id": "dvc-2-000200-citizen-id-card-14-plus",
+                        "title": "Cấp thẻ căn cước cho người từ đủ 14 tuổi trở lên",
+                        "archetype": "policy_sop",
+                        "source_uri": "citizen-id.md",
+                        "format": "md",
+                        "language": "vi",
+                        "provenance_owner": "owner",
+                        "license": "internal",
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    store.ingest_manifest(manifest)
+
+    hits = store.search_units("mã thủ tục 2.000200", top_k=3)
+
+    assert hits
+    assert hits[0].doc_id == "dvc-2-000200-citizen-id-card-14-plus"
+
+
+def test_identifier_variants_include_source_facing_procedure_code() -> None:
+    assert "2.000200" in identifier_variants("dvc-2-000200-citizen-id-card-14-plus")
+    assert "dvc-2-000200" in identifier_search_patterns("2.000200")
+    assert "dvc-7169" in identifier_search_patterns("7169")
+
+
+def test_source_pair_doc_ids_route_governed_multidoc_questions() -> None:
+    doc_ids = source_pair_doc_ids("Nguồn DVC nào và TVPL nào cùng hỗ trợ câu hỏi hóa đơn điện tử?")
+    assert "dvc-1-010341-einvoice-error-handling" in doc_ids
+    assert "tvpl-nd-123-2020-invoices-records" in doc_ids
 
 
 def test_search_units_supports_document_metadata_filters(tmp_path: Path) -> None:

@@ -77,3 +77,35 @@ def make_fts_query(query: str, extras: Iterable[str] = ()) -> str:
     if not terms:
         return '""'
     return " OR ".join(f'"{term}"' for term in terms)
+
+
+def identifier_variants(identifier: str) -> List[str]:
+    value = identifier or ""
+    variants = {value}
+    folded = ascii_fold(value)
+    dvc_match = re.search(r"\bdvc-(\d+)-(\d+)\b", folded)
+    if dvc_match:
+        variants.add(f"{dvc_match.group(1)}.{dvc_match.group(2)}")
+        variants.add(f"DVC {dvc_match.group(1)}.{dvc_match.group(2)}")
+        variants.add(f"dvc {dvc_match.group(1)}.{dvc_match.group(2)}")
+    plain_dvc_match = re.search(r"\bdvc-(\d{3,6})\b", folded)
+    if plain_dvc_match:
+        variants.add(f"DVC {plain_dvc_match.group(1)}")
+        variants.add(f"dvc {plain_dvc_match.group(1)}")
+    plain_qd_match = re.search(r"\btvpl-qd-(\d+)\b", folded)
+    if plain_qd_match:
+        number = plain_qd_match.group(1)
+        for suffix in ["QD-CT", "QĐ-CT", "QD-TCT", "QĐ-TCT"]:
+            variants.add(f"{number}/{suffix}")
+    legal_match = re.search(r"\btvpl-(nd|tt|qd)-(\d+)-(\d{4})\b", folded)
+    if legal_match:
+        kind = legal_match.group(1).upper()
+        number = legal_match.group(2)
+        year = legal_match.group(3)
+        variants.add(f"{number}/{year}/{kind}")
+        variants.add(f"{kind} {number}/{year}")
+        suffixes = {"ND": ["ND-CP", "NĐ-CP"], "TT": ["TT-BTC"], "QD": ["QD-CT", "QĐ-CT", "QD-TCT", "QĐ-TCT"]}
+        for suffix in suffixes.get(kind, []):
+            variants.add(f"{number}/{year}/{suffix}")
+            variants.add(f"{number}/{suffix.split('-')[0]}-{suffix.split('-')[1] if '-' in suffix else ''}".rstrip("-"))
+    return sorted(variants)
