@@ -4,6 +4,9 @@ from __future__ import annotations
 
 from typing import Dict, Iterable, List, Set
 
+from dataclasses import asdict
+
+from .contracts import validate_answer_contract
 from .models import Citation, GroundedAnswer
 from .normalize import ascii_fold, fts_query_terms, identifier_variants
 from .store import source_pair_doc_ids
@@ -141,6 +144,140 @@ def answer_question(session: ToolSession, question: str, top_k: int = 5) -> Grou
         used_unit_ids=[hit["unit_id"] for hit in read],
         tool_calls=session.calls,
     )
+
+
+def insufficient_answer(session: ToolSession) -> GroundedAnswer:
+    return GroundedAnswer(
+        answer="Không đủ bằng chứng trong kho tài liệu để trả lời câu hỏi này.",
+        citations=[],
+        confidence_label="insufficient",
+        insufficient_evidence=True,
+        used_doc_ids=[],
+        used_unit_ids=[],
+        tool_calls=session.calls,
+    )
+
+
+def answer_question_llm_assisted(session: ToolSession, question: str, top_k: int = 5) -> GroundedAnswer:
+    """Answer through a bounded LLM layer, with deterministic fallback.
+
+    The LLM may plan, judge, and draft text, but citations are always assembled
+    from units read through the local tool session and the answer contract is
+    validated before returning.
+    """
+
+    try:
+        from .llm import LLMError
+        from .semantic import compose_answer, judge_evidence, llm_trace, plan_query
+    except ImportError:
+        fallback = deterministic_fallback(session, question, top_k)
+        fallback.tool_calls.append(
+            {
+                "tool": "llm.dependency",
+                "args": {
+                    "failure_type": "llm_dependency_missing",
+                    "fallback_path": "deterministic",
+                    "install": "pip install -e '.[llm]'",
+                },
+                "result_count": 0,
+            }
+        )
+        return fallback
+
+    try:
+        plan = plan_query(question)
+        session.calls.append(llm_trace("llm.plan_query", "QueryPlan"))
+        terms = session.resolve_terms(question)
+        search_queries = [question, *plan.rewritten_queries]
+        hits: List[Dict[str, object]] = []
+        for query in compact_search_queries(search_queries):
+            hits.extend(session.search_units(" ".join([query, *terms]), top_k=top_k, doc_type=plan.doc_type_filter))
+        hits = dedupe_hits(hits)[: max(top_k, 5)]
+        decision = judge_evidence(question, hits)
+        session.calls.append(llm_trace("llm.judge_evidence", "EvidenceDecision"))
+        if decision.answerability != "answerable":
+            answer = insufficient_answer(session)
+            answer.tool_calls.append(llm_trace("llm.fallback", "EvidenceDecision", result_count=0, failure_type=f"llm_{decision.answerability}", fallback_path="insufficient"))
+            return answer
+        required_ids = [unit_id for unit_id in decision.required_unit_ids if unit_id]
+        read = session.read_units(required_ids)
+        read_ids = {str(hit["unit_id"]) for hit in read}
+        if set(required_ids) != read_ids:
+            raise LLMError("llm_unknown_unit_id", "Required LLM unit IDs were not readable from the store.")
+        support_question = " ".join([question, *terms])
+        if (
+            not read
+            or not has_sufficient_support(support_question, read)
+            or has_contradictory_evidence(support_question, read)
+            or has_unclear_applicable_version(read)
+        ):
+            raise LLMError("llm_deterministic_validator_rejected", "Deterministic support checks rejected the LLM evidence decision.")
+        draft = compose_answer(question, read, decision)
+        session.calls.append(llm_trace("llm.compose_answer", "AnswerDraft"))
+        used_ids = [unit_id for unit_id in draft.used_unit_ids if unit_id in read_ids]
+        if set(required_ids) - set(used_ids):
+            raise LLMError("llm_deterministic_validator_rejected", "LLM draft omitted a required supporting unit.")
+        used_hits = [hit for hit in read if str(hit["unit_id"]) in set(used_ids)]
+        if not used_hits:
+            raise LLMError("llm_deterministic_validator_rejected", "LLM draft did not use any readable evidence units.")
+        answer = GroundedAnswer(
+            answer=draft.answer,
+            citations=[citation_from_hit(hit) for hit in used_hits],
+            confidence_label=draft.confidence_label,
+            insufficient_evidence=False,
+            used_doc_ids=sorted({str(hit["doc_id"]) for hit in used_hits}),
+            used_unit_ids=[str(hit["unit_id"]) for hit in used_hits],
+            tool_calls=session.calls,
+        )
+        contract_errors = validate_answer_contract(asdict(answer))
+        if contract_errors:
+            raise LLMError("llm_answer_contract_violation", "; ".join(contract_errors))
+        return answer
+    except LLMError as exc:
+        fallback = deterministic_fallback(session, question, top_k)
+        fallback.tool_calls.append(
+            {
+                "tool": "llm.fallback",
+                "args": {
+                    **exc.metadata,
+                    "failure_type": exc.failure_type,
+                    "fallback_path": "deterministic",
+                },
+                "result_count": 0,
+            }
+        )
+        return fallback
+
+
+def deterministic_fallback(session: ToolSession, question: str, top_k: int) -> GroundedAnswer:
+    fallback_session = ToolSession(session.store)
+    answer = answer_question(fallback_session, question, top_k=top_k)
+    answer.tool_calls[:] = [*session.calls, *answer.tool_calls]
+    return answer
+
+
+def compact_search_queries(queries: List[str]) -> List[str]:
+    cleaned: List[str] = []
+    seen: Set[str] = set()
+    for query in queries:
+        value = " ".join(str(query).split())
+        if value and value not in seen:
+            cleaned.append(value)
+            seen.add(value)
+    if len(cleaned) <= 2:
+        return cleaned
+    return [cleaned[0], " ".join(cleaned[1:])]
+
+
+def dedupe_hits(hits: List[Dict[str, object]]) -> List[Dict[str, object]]:
+    out: List[Dict[str, object]] = []
+    seen: Set[str] = set()
+    for hit in hits:
+        unit_id = str(hit.get("unit_id") or "")
+        if unit_id and unit_id not in seen:
+            out.append(hit)
+            seen.add(unit_id)
+    return out
 
 
 def include_source_pair_hits(

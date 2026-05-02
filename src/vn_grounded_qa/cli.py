@@ -8,7 +8,7 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Dict, Iterable, List, Optional
 
-from .answer import answer_question
+from .answer import answer_question, answer_question_llm_assisted
 from .baselines import compare_sparse_to_baseline, run_thin_rag_baseline, write_baseline_comparison_report
 from .bakeoff import run_parser_bakeoff, write_report
 from .corpus import validate_architecture_manifest, validate_pack_manifest, write_manifest_template, write_pack_template, write_synthetic_architecture_corpus, write_synthetic_pack
@@ -56,11 +56,13 @@ def main(argv: Optional[List[str]] = None) -> int:
     ask = sub.add_parser("ask", help="Answer with citations from the corpus")
     ask.add_argument("question")
     ask.add_argument("--top-k", type=int, default=5)
+    ask.add_argument("--mode", choices=["deterministic", "llm-assisted"], default="deterministic")
     ask.add_argument("--trace-id", default="", help="Persist tool calls under this trace id")
 
     eval_cmd = sub.add_parser("eval", help="Run a JSONL retrieval/no-answer eval")
     eval_cmd.add_argument("examples")
     eval_cmd.add_argument("--k", type=int, default=10)
+    eval_cmd.add_argument("--mode", choices=["deterministic", "llm-assisted"], default="deterministic")
 
     evalset = sub.add_parser("evalset", help="Manage authored evaluation sets")
     evalset_sub = evalset.add_subparsers(dest="evalset_command", required=True)
@@ -346,11 +348,12 @@ def main(argv: Optional[List[str]] = None) -> int:
             print(json.dumps([asdict(hit) for hit in hits], ensure_ascii=False, indent=2))
             return 0
         if args.command == "ask":
-            answer = answer_question(ToolSession(store, trace_id=args.trace_id or None), args.question, top_k=args.top_k)
+            answerer = answer_question if args.mode == "deterministic" else answer_question_llm_assisted
+            answer = answerer(ToolSession(store, trace_id=args.trace_id or None), args.question, top_k=args.top_k)
             print(json.dumps(asdict(answer), ensure_ascii=False, indent=2))
             return 0
         if args.command == "eval":
-            result = run_eval(store, load_jsonl(Path(args.examples)), k=args.k)
+            result = run_eval(store, load_jsonl(Path(args.examples)), k=args.k, mode=args.mode)
             print(json.dumps(asdict(result), ensure_ascii=False, indent=2))
             return 0
         if args.command == "baselines":

@@ -9,7 +9,7 @@ from dataclasses import asdict, dataclass, field
 from pathlib import Path
 from typing import Dict, Iterable, List, Mapping, Optional
 
-from .answer import answer_question
+from .answer import answer_question, answer_question_llm_assisted
 from .contracts import load_answer_contract_schema, validate_answer_contract
 from .normalize import identifier_variants
 from .store import GroundedStore
@@ -66,6 +66,15 @@ class EvalResult:
     tool_limit_error_rate: float
     failures: List[Dict[str, object]]
     warnings: List[str] = field(default_factory=list)
+    mode: str = "deterministic"
+    estimated_llm_calls: int = 0
+    estimated_llm_cost: float = 0.0
+    llm_fallback_count: int = 0
+    llm_timeout_count: int = 0
+    llm_retry_exhausted_count: int = 0
+    llm_schema_parse_failure_count: int = 0
+    llm_invalid_unit_id_count: int = 0
+    llm_unsupported_answer_rejected_count: int = 0
 
 
 def load_jsonl(path: Path) -> List[Dict[str, object]]:
@@ -251,7 +260,7 @@ def synthetic_version_status_rows() -> List[Mapping[str, object]]:
     return rows
 
 
-def run_eval(store: GroundedStore, examples: Iterable[Dict[str, object]], k: int = 10) -> EvalResult:
+def run_eval(store: GroundedStore, examples: Iterable[Dict[str, object]], k: int = 10, mode: str = "deterministic") -> EvalResult:
     rows = list(examples)
     retrieval_total = 0
     retrieval_hits = 0
@@ -276,6 +285,15 @@ def run_eval(store: GroundedStore, examples: Iterable[Dict[str, object]], k: int
     failures: List[Dict[str, object]] = []
     warnings: List[str] = []
     answer_schema = load_answer_contract_schema()
+    answerer = answer_question if mode == "deterministic" else answer_question_llm_assisted
+    estimated_llm_calls = 0
+    estimated_llm_cost = 0.0
+    llm_fallback_count = 0
+    llm_timeout_count = 0
+    llm_retry_exhausted_count = 0
+    llm_schema_parse_failure_count = 0
+    llm_invalid_unit_id_count = 0
+    llm_unsupported_answer_rejected_count = 0
     for row in rows:
         question = str(row["question"])
         category = str(row.get("category") or "uncategorized")
@@ -344,7 +362,7 @@ def run_eval(store: GroundedStore, examples: Iterable[Dict[str, object]], k: int
             no_answer_total += 1
             start_answer = time.perf_counter()
             try:
-                answer = answer_question(ToolSession(store), question, top_k=k)
+                answer = answerer(ToolSession(store), question, top_k=k)
             except (TypeError, ValueError) as exc:
                 tool_argument_error_count += 1
                 tool_invocation_count += 1
@@ -362,6 +380,15 @@ def run_eval(store: GroundedStore, examples: Iterable[Dict[str, object]], k: int
             tool_invocation_count += 1
             tool_counts.append(len(answer.tool_calls))
             estimated_costs.append(estimate_query_cost(answer.tool_calls))
+            llm_metrics = collect_llm_metrics(answer.tool_calls)
+            estimated_llm_calls += llm_metrics["estimated_llm_calls"]
+            estimated_llm_cost += llm_metrics["estimated_llm_cost"]
+            llm_fallback_count += llm_metrics["llm_fallback_count"]
+            llm_timeout_count += llm_metrics["llm_timeout_count"]
+            llm_retry_exhausted_count += llm_metrics["llm_retry_exhausted_count"]
+            llm_schema_parse_failure_count += llm_metrics["llm_schema_parse_failure_count"]
+            llm_invalid_unit_id_count += llm_metrics["llm_invalid_unit_id_count"]
+            llm_unsupported_answer_rejected_count += llm_metrics["llm_unsupported_answer_rejected_count"]
             contract_errors = validate_answer_contract(asdict(answer), answer_schema)
             if contract_errors:
                 failures.append({"question": question, "type": "answer_contract_violation", "errors": contract_errors})
@@ -376,7 +403,7 @@ def run_eval(store: GroundedStore, examples: Iterable[Dict[str, object]], k: int
             supported_answer_total += 1
             start_answer = time.perf_counter()
             try:
-                answer = answer_question(ToolSession(store), question, top_k=k)
+                answer = answerer(ToolSession(store), question, top_k=k)
             except (TypeError, ValueError) as exc:
                 tool_argument_error_count += 1
                 tool_invocation_count += 1
@@ -394,6 +421,15 @@ def run_eval(store: GroundedStore, examples: Iterable[Dict[str, object]], k: int
             tool_invocation_count += 1
             tool_counts.append(len(answer.tool_calls))
             estimated_costs.append(estimate_query_cost(answer.tool_calls))
+            llm_metrics = collect_llm_metrics(answer.tool_calls)
+            estimated_llm_calls += llm_metrics["estimated_llm_calls"]
+            estimated_llm_cost += llm_metrics["estimated_llm_cost"]
+            llm_fallback_count += llm_metrics["llm_fallback_count"]
+            llm_timeout_count += llm_metrics["llm_timeout_count"]
+            llm_retry_exhausted_count += llm_metrics["llm_retry_exhausted_count"]
+            llm_schema_parse_failure_count += llm_metrics["llm_schema_parse_failure_count"]
+            llm_invalid_unit_id_count += llm_metrics["llm_invalid_unit_id_count"]
+            llm_unsupported_answer_rejected_count += llm_metrics["llm_unsupported_answer_rejected_count"]
             contract_errors = validate_answer_contract(asdict(answer), answer_schema)
             if contract_errors:
                 failures.append({"question": question, "type": "answer_contract_violation", "errors": contract_errors})
@@ -467,6 +503,15 @@ def run_eval(store: GroundedStore, examples: Iterable[Dict[str, object]], k: int
         tool_limit_error_rate=tool_limit_error_count / tool_invocation_count if tool_invocation_count else 0.0,
         failures=failures,
         warnings=warnings,
+        mode=mode,
+        estimated_llm_calls=estimated_llm_calls,
+        estimated_llm_cost=round(estimated_llm_cost, 6),
+        llm_fallback_count=llm_fallback_count,
+        llm_timeout_count=llm_timeout_count,
+        llm_retry_exhausted_count=llm_retry_exhausted_count,
+        llm_schema_parse_failure_count=llm_schema_parse_failure_count,
+        llm_invalid_unit_id_count=llm_invalid_unit_id_count,
+        llm_unsupported_answer_rejected_count=llm_unsupported_answer_rejected_count,
     )
 
 
@@ -521,3 +566,22 @@ def estimate_query_cost(tool_calls: List[Mapping[str, object]], per_tool_call_co
     """
 
     return round(len(tool_calls) * per_tool_call_cost, 6)
+
+
+def collect_llm_metrics(tool_calls: List[Mapping[str, object]]) -> Dict[str, float | int]:
+    llm_calls = [call for call in tool_calls if str(call.get("tool") or "").startswith("llm.")]
+    failure_types = []
+    for call in llm_calls:
+        args = call.get("args") or {}
+        if isinstance(args, Mapping) and args.get("failure_type"):
+            failure_types.append(str(args["failure_type"]))
+    return {
+        "estimated_llm_calls": len([call for call in llm_calls if call.get("result_count", 0) != 0]),
+        "estimated_llm_cost": round(len([call for call in llm_calls if call.get("result_count", 0) != 0]) * 0.0005, 6),
+        "llm_fallback_count": sum(1 for call in llm_calls if str(call.get("tool")) == "llm.fallback"),
+        "llm_timeout_count": failure_types.count("llm_timeout"),
+        "llm_retry_exhausted_count": failure_types.count("llm_retry_exhausted"),
+        "llm_schema_parse_failure_count": failure_types.count("llm_invalid_json") + failure_types.count("llm_schema_validation_failed"),
+        "llm_invalid_unit_id_count": failure_types.count("llm_unknown_unit_id"),
+        "llm_unsupported_answer_rejected_count": failure_types.count("llm_deterministic_validator_rejected"),
+    }
