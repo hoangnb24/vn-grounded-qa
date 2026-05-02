@@ -1,6 +1,6 @@
 # Implementation Plan — Milestones, Schemas, Evaluation, Risk
 
-**Status:** Governed sparse-first MVP complete; strict release gate `go`  
+**Status:** Governed sparse-first MVP complete; strict release gate `go`; LLM-assisted mode experimental  
 **Date:** 2026-05-02
 
 The codebase contains the sparse-first MVP implementation, governed input
@@ -163,6 +163,25 @@ Retrieval behavior includes:
 
 Orchestration ceiling: max 6 total tool calls, max 2 searches, max expansion depth 1.
 
+### LLM-Assisted Semantic Layer
+
+The repository includes an optional, bounded LLM-assisted path:
+
+- `src/vn_grounded_qa/llm.py`: Google Gemini adapter using structured JSON
+  output, env-based Developer API / Vertex AI configuration, bounded timeout,
+  and finite retry attempts.
+- `src/vn_grounded_qa/semantic_models.py`: strict Pydantic contracts for
+  `QueryPlan`, `EvidenceDecision`, `EvidenceJudgment`, and `AnswerDraft`.
+- `src/vn_grounded_qa/semantic.py`: prompt wrappers and exact unit-ID
+  validation for planning, evidence judgment, and answer drafting.
+- `answer_question_llm_assisted(...)`: parallel answer path that keeps
+  deterministic retrieval, unit reads, citation construction, support checks,
+  and answer-contract validation authoritative.
+
+The LLM layer cannot create citations, invent unit IDs, enable external tools,
+or run an open-ended agent loop. Failures fall back to deterministic mode with
+failure metadata in `tool_calls`.
+
 ### Answer Contract
 
 Every answer must include: `answer`, `citations[]`, `confidence_label` (high/medium/low/insufficient), `insufficient_evidence` flag, `used_doc_ids[]`, `used_unit_ids[]`.
@@ -193,6 +212,11 @@ Anti-hallucination: never fabricate source anchors, never invent documents, neve
 Rule: no more than 40% from auto-generated QA. Rest must be rewritten or human-authored and marked with `source: rewritten` or `source: human`.
 
 **Metrics:** Recall@k, answer correctness, citation exactness, hallucinated citation count, no-answer precision/recall, p50/p95 latency, tool call count, per-query cost estimate.
+
+`run_eval(..., mode="llm-assisted")` reports LLM-specific metrics: estimated
+LLM calls/cost, fallback count, timeout count, retry-exhausted count,
+schema/parse failure count, invalid unit-ID count, and deterministic validator
+rejection count. Deterministic mode remains the release gate owner.
 
 The checked-in governed eval file is `eval/synthetic_mvp_seed.jsonl`. It
 contains 80 rewritten questions with zero auto-generated rows and covers all

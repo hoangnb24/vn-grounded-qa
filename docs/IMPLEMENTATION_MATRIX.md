@@ -16,6 +16,7 @@ values are strict:
 | Sparse FTS retrieval | done | `content_units_fts`, `reports/m2_gate.json` | Includes alias expansion, identifier routing, source-pair routing, metadata filters, and reranking |
 | Bounded tool layer | done | `src/vn_grounded_qa/tools.py`, `docs/TOOL_CONTRACTS.md`, `reports/m3_gate.json` | Max 6 tool calls, max 2 searches, expansion depth 1 |
 | Grounded answer contract | done | `src/vn_grounded_qa/answer.py`, `docs/ANSWER_CONTRACT.schema.json`, `reports/m4_gate.json` | Extractive answers include citations, source-facing anchors, confidence labels, no-answer policy, and contradiction/version checks |
+| LLM-assisted answer path | done | `src/vn_grounded_qa/llm.py`, `src/vn_grounded_qa/semantic.py`, `src/vn_grounded_qa/semantic_models.py`, `docs/LLM_ASSISTED_MODE.md`, `tests/test_llm_assisted.py` | Gemini structured-output adapter is optional; strict Pydantic contracts, exact unit-ID validation, deterministic citation construction, fallback metadata, and `--mode llm-assisted` are covered by tests |
 | Evaluation harness | done | `src/vn_grounded_qa/eval.py`, `eval/taxonomy.yaml`, `eval/synthetic_mvp_seed.jsonl` | 80 rewritten questions, 0 auto-generated rows, all seven categories |
 | Release gates | done | `reports/governed_readiness.json`, `reports/m2_gate.json` through `reports/m6_gate.json`, `reports/release_gate.json` | Strict release gate is `go` with deployment-owner and license checks |
 
@@ -67,6 +68,7 @@ values are strict:
 | Tool contracts | done | `src/vn_grounded_qa/tools.py`, `docs/TOOL_CONTRACTS.md` | Search/read/context/document/term/version tools documented |
 | Max 6 calls, max 2 searches, depth 1 | done | `ToolSession` | Gate reports no tool-limit errors |
 | Trace logging | done | `tool_traces`, `ask --trace-id`, `traces list`, `traces show` | Persisted traces include args, result counts, and timestamps |
+| LLM metadata trace entries | done | `answer_question_llm_assisted`, `docs/TOOL_CONTRACTS.md` | `llm.plan_query`, `llm.judge_evidence`, `llm.compose_answer`, `llm.fallback`, and `llm.dependency` entries expose provider/failure metadata without prompts or API keys |
 | Avg tool calls <= 4, p95 <= 6 | done | `reports/m3_gate.json` | avg `2.875`, p95 `3.000` |
 | Argument error rate < 2% | done | `reports/m3_gate.json` | `0.000` |
 | Infinite loop rate = 0 | done | `reports/m3_gate.json` | `0.000` |
@@ -81,6 +83,17 @@ values are strict:
 | No-answer precision >= 90% | done | `reports/m4_gate.json` | `1.000` |
 | Full-pipeline p95 <= 8s | done | `reports/m4_gate.json` | `22.954ms` |
 | Eval failures = 0 | done | `reports/m4_gate.json` | `0` |
+
+### LLM-Assisted Mode
+
+| Requirement | Status | Artifact | Evidence |
+|---|---:|---|---|
+| Separate answer path | done | `answer_question_llm_assisted(...)`, `ask --mode llm-assisted` | Deterministic mode remains the default; LLM-assisted mode is selected explicitly |
+| Optional Google provider | done | `src/vn_grounded_qa/llm.py`, `pyproject.toml` | `llm` extra declares `google-genai` and `pydantic`; base dependencies remain empty |
+| Structured output contracts | done | `src/vn_grounded_qa/semantic_models.py` | Strict Pydantic models reject extra fields and bound enums/list sizes |
+| Citation and unit-ID safety | done | `src/vn_grounded_qa/semantic.py`, `src/vn_grounded_qa/answer.py` | Unknown unit IDs are rejected; citations are built from read units only |
+| Eval mode comparison | done | `eval --mode deterministic`, `eval --mode llm-assisted` | Eval result includes `mode`, estimated LLM calls/cost, fallback, timeout, retry, schema, invalid-ID, and validator-rejection counts |
+| Stubbed safety tests | done | `tests/test_llm_assisted.py` | Fake provider tests cover schema validation, unknown IDs, no-answer, contradiction, CLI switching, eval comparison, and deterministic compatibility |
 
 ### M5 — Thin RAG Baseline Comparison
 
@@ -120,6 +133,6 @@ The ADR leaves these upgrades available when future evidence justifies them:
 
 - local reranker or hybrid neural retrieval,
 - fuller evidence/version graph,
-- model-backed thin RAG baseline,
+- live Gemini promotion gate for LLM-assisted mode,
 - production VnCoreNLP segmentation wrapper,
 - original-source legal ingestion for redistribution-sensitive deployments.

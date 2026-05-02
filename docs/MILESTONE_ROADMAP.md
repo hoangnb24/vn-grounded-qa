@@ -98,6 +98,18 @@ Gate evidence:
 - No-answer precision: `1.000`
 - Full-pipeline p95: `22.954ms`
 
+LLM-assisted answering is available as an explicitly selected mode on the same
+answer and eval surfaces:
+
+```bash
+PYTHONPATH=src python3 -m vn_grounded_qa.cli --db grounded.db ask "Câu hỏi?" --mode llm-assisted
+PYTHONPATH=src python3 -m vn_grounded_qa.cli --db grounded.db eval eval/synthetic_mvp_seed.jsonl --mode llm-assisted
+```
+
+The release gate remains deterministic until LLM-assisted eval matches the
+deterministic path on citation exactness, hallucinated citation count,
+no-answer precision, and answer-contract validity.
+
 ## Phase 5 — M5/M6 Decision Work
 
 Goal: decide whether sparse-first remains justified.
@@ -141,7 +153,8 @@ Future work follows the ADR upgrade order when gate evidence justifies extra
 complexity:
 
 1. Terminology and alias enrichment.
-2. Query rewrite.
+2. LLM-assisted query planning, evidence judgment, and answer drafting through
+   the explicit `llm-assisted` mode.
 3. Local reranker.
 4. Evidence graph.
 5. Version graph.

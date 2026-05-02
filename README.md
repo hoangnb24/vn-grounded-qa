@@ -39,6 +39,7 @@ Key design decisions:
 
 See [`docs/ADR-001.md`](docs/ADR-001.md) for the full architecture decision record.
 See [`docs/IMPLEMENTATION.md`](docs/IMPLEMENTATION.md) for milestones, schemas, evaluation, and risk.
+See [`docs/LLM_ASSISTED_MODE.md`](docs/LLM_ASSISTED_MODE.md) for the bounded Gemini-assisted answer path.
 
 ## Quick Orientation
 
@@ -46,6 +47,7 @@ See [`docs/IMPLEMENTATION.md`](docs/IMPLEMENTATION.md) for milestones, schemas, 
 docs/
 ├── ADR-001.md          # Architecture decision record (the "why")
 ├── IMPLEMENTATION.md   # Milestones, schemas, eval, risk (the "how")
+├── LLM_ASSISTED_MODE.md # Gemini-assisted semantics with deterministic citations
 └── COMPLETION_PLAN.md  # Governed completion record and release-gate commands
 ```
 
@@ -65,6 +67,10 @@ implementation and a strict governed release record:
 - grounded extractive answer contract with source-facing citation anchors,
   confidence labels, contradiction checks, version checks, and explicit
   insufficient-evidence behavior,
+- optional LLM-assisted mode using Google Gemini structured JSON outputs for
+  query planning, evidence judgment, and answer drafting while keeping
+  deterministic retrieval, citation assembly, and answer-contract validation
+  authoritative,
 - authored 80-question MVP eval set across seven taxonomy categories,
 - JSONL evaluation harness for retrieval, answer correctness, citation
   exactness, no-answer behavior, latency, tool-call, and cost metrics,
@@ -142,7 +148,7 @@ Ingest the governed corpus and run the release gate ladder:
 GOVERNED_DB="governed.db"
 PYTHONPATH=src python3 -m vn_grounded_qa.cli --db "$GOVERNED_DB" init
 PYTHONPATH=src python3 -m vn_grounded_qa.cli --db "$GOVERNED_DB" ingest-manifest corpus/architecture/manifest.json
-PYTHONPATH=src python3 -m vn_grounded_qa.cli --db "$GOVERNED_DB" eval eval/synthetic_mvp_seed.jsonl --k 10
+PYTHONPATH=src python3 -m vn_grounded_qa.cli --db "$GOVERNED_DB" eval eval/synthetic_mvp_seed.jsonl --k 10 --mode deterministic
 
 PYTHONPATH=src python3 -m vn_grounded_qa.cli readiness governed --eval eval/synthetic_mvp_seed.jsonl --strict-risk-owners --out reports/governed_readiness.json
 PYTHONPATH=src python3 -m vn_grounded_qa.cli gates m0 --manifest corpus/architecture/manifest.json --out reports/m0_gate.json
@@ -207,9 +213,55 @@ Core commands:
 - `search QUERY --top-k N --filter KEY=VALUE`: search evidence units. Filters
   support `doc_id`, `doc_family_id`, `doc_type`, `status`, and
   `version_label`.
-- `ask QUESTION --top-k N --trace-id ID`: answer with citations and optionally
-  persist tool calls under a trace ID.
-- `eval EXAMPLES --k N`: run retrieval and answer evaluation over JSONL rows.
+- `ask QUESTION --top-k N --mode {deterministic,llm-assisted} --trace-id ID`:
+  answer with citations and optionally persist tool calls under a trace ID.
+  The default mode is `deterministic`.
+- `eval EXAMPLES --k N --mode {deterministic,llm-assisted}`: run retrieval and
+  answer evaluation over JSONL rows. The default mode is `deterministic`.
+
+## LLM-Assisted Mode
+
+LLM-assisted mode is a parallel experimental path, not the release default.
+Live Gemini calls use optional dependencies:
+
+```bash
+pip install -e '.[llm]'
+```
+
+Developer API configuration:
+
+```bash
+export VN_GROUNDED_QA_LLM_PROVIDER=google
+export VN_GROUNDED_QA_LLM_MODEL=gemini-2.5-flash
+export VN_GROUNDED_QA_LLM_TIMEOUT_MS=30000
+export VN_GROUNDED_QA_LLM_RETRY_ATTEMPTS=2
+export GEMINI_API_KEY=...
+```
+
+Vertex AI can use the same adapter with:
+
+```bash
+export GOOGLE_GENAI_USE_VERTEXAI=true
+export GOOGLE_CLOUD_PROJECT=...
+export GOOGLE_CLOUD_LOCATION=...
+```
+
+Commands:
+
+```bash
+PYTHONPATH=src python3 -m vn_grounded_qa.cli --db grounded.db ask "HRM lưu gì?" --mode deterministic
+PYTHONPATH=src python3 -m vn_grounded_qa.cli --db grounded.db ask "HRM lưu gì?" --mode llm-assisted
+PYTHONPATH=src python3 -m vn_grounded_qa.cli --db grounded.db eval eval/synthetic_mvp_seed.jsonl --mode deterministic
+PYTHONPATH=src python3 -m vn_grounded_qa.cli --db grounded.db eval eval/synthetic_mvp_seed.jsonl --mode llm-assisted
+```
+
+The LLM can only return structured Pydantic-validated JSON. It may plan
+rewrites, judge supplied units, and draft Vietnamese text, but it cannot create
+citations, call tools, or reference unit IDs outside the retrieved/read set.
+The final `GroundedAnswer` still uses deterministic citation construction and
+the documented answer-contract validator. Provider failures, invalid schemas,
+unknown unit IDs, timeouts, and deterministic validator rejection fall back to
+the deterministic path and are recorded in `tool_calls` metadata.
 
 Governance and eval commands:
 

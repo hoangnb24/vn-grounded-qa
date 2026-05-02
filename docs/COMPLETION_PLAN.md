@@ -30,6 +30,9 @@ Implemented:
 - Vietnamese normalization, ASCII folding, identifier extraction, and optional
   external segmentation hook.
 - Bounded semantic tools and extractive grounded answer contract.
+- Optional LLM-assisted answer mode with Google Gemini structured JSON,
+  Pydantic validation, deterministic citation construction, and deterministic
+  fallback metadata.
 - Eval-set validation, risk validation, readiness checks, M0-M6 gates, release
   gate, and decision reports.
 - Governed architecture, legal regression, and production shadow manifests.
@@ -38,7 +41,7 @@ Fresh evidence from the current checkout:
 
 ```text
 python3 -m pytest -q:
-123 passed in 14.29s
+131 passed in 15.56s
 
 corpus/architecture/manifest.json:
 29 docs; faq=3, legal=12, policy_sop=7, table_pdf=5, technical_markdown=2
@@ -168,5 +171,7 @@ returns a release `go` and all tests pass.
 ## Final State
 
 No completion blocker remains in the governed release path. Remaining future
-work is production hardening only, especially replacing TVPL-derived summaries
-with original/current legal source files where redistribution requires it.
+work is production hardening and live provider promotion evidence, especially
+replacing TVPL-derived summaries with original/current legal source files where
+redistribution requires it and evaluating `llm-assisted` mode with live Gemini
+credentials before any default-mode change.

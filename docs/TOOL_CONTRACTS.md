@@ -103,3 +103,24 @@ Arguments:
 - `as_of`: optional ISO date
 
 Returns: active document metadata or `null`.
+
+## LLM-Assisted Pseudo-Tools
+
+`--mode llm-assisted` records LLM metadata entries in
+`GroundedAnswer.tool_calls` so eval reports can count provider behavior without
+letting Gemini call repository tools.
+
+Possible entries:
+
+- `llm.plan_query`
+- `llm.judge_evidence`
+- `llm.compose_answer`
+- `llm.fallback`
+- `llm.dependency`
+
+Arguments include provider, model, timeout, retry attempts, schema name,
+fallback path, and failure type when present. API keys and full prompts are not
+persisted.
+
+The real retrieval/read tools remain deterministic Python calls. LLM-assisted
+mode does not enable automatic function calling or external provider tools.
