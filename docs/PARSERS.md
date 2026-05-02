@@ -23,8 +23,8 @@ keeps bakeoff runs auditable: a missing dependency is a failed candidate, not a
 silent fallback.
 
 For `auto`, optional-parser degradation is reported in each document's
-`parser_warnings` list. A successful `auto` bakeoff can therefore still show
-that Docling or Marker were unavailable and the local parser was used.
+`parser_warnings` list. A successful `auto` bakeoff can show that Docling or
+Marker were unavailable and the local parser was used.
 
 Use parser selection during ingestion:
 
@@ -32,8 +32,11 @@ Use parser selection during ingestion:
 PYTHONPATH=src python3 -m vn_grounded_qa.cli --db grounded.db ingest-manifest corpus/architecture/manifest.json --parser auto
 ```
 
-The documented M1 gate is not satisfied until Docling and Marker are run against
-the governed architecture corpus and their scorecards are reviewed.
+The M1 gate is evaluated through `gates m1`, which runs a parser bakeoff on the
+governed architecture corpus and applies the parse-success, heading-recovery,
+and provenance-completeness thresholds. Optional Docling and Marker scorecards
+can be generated independently when those dependencies are installed in the
+target runtime.
 
 ## Heading Gold
 

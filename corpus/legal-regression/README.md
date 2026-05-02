@@ -1,9 +1,10 @@
 # Legal Regression Pack
 
-The implementation plan requires 12-20 legal documents to stress citation,
-cross-reference, and version reasoning.
+The legal regression pack contains governed legal documents that stress
+citation, cross-reference, and version/status reasoning. The checked-in pack
+registers 12 documents.
 
-Create a template:
+Create a template for a replacement or experimental pack:
 
 ```bash
 PYTHONPATH=src python3 -m vn_grounded_qa.cli corpus pack-template corpus/legal-regression/manifest.json --type legal_regression

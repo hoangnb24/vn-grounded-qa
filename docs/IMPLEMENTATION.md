@@ -1,14 +1,13 @@
 # Implementation Plan — Milestones, Schemas, Evaluation, Risk
 
-**Status:** Runnable MVP implemented; controlled release blocked on governed inputs  
+**Status:** Governed sparse-first MVP complete; strict release gate `go`  
 **Date:** 2026-05-02
 
-The codebase now contains the sparse-first MVP shell, milestone gates, release
-gate, synthetic verification fixtures, and governed-input readiness checks.
-This plan remains the canonical completion contract. Items are only complete
-for controlled release when the governed architecture corpus, governed MVP eval
-set, legal regression pack, production shadow pack, and named deployment risk
-owners satisfy the gates.
+The codebase contains the sparse-first MVP implementation, governed input
+manifests, milestone gates, release gate, synthetic verification fixtures, and
+readiness checks. The governed architecture corpus, MVP eval set, legal
+regression pack, production shadow pack, named deployment risk owners, and MIT
+license satisfy the strict release gate.
 
 ---
 
@@ -75,7 +74,7 @@ Gate: Sparse + bounded-tools achieves ≥ 85% of thin RAG baseline answer correc
 
 ### M6 — Scale & Upgrade Decision
 
-**Exit question:** What new complexity, if any, is now justified?
+**Exit question:** What additional complexity, if any, is justified?
 
 Gates:
 - Quality drop ≤ 5 points on larger packs
@@ -88,9 +87,9 @@ Gates:
 
 | Corpus | Size | Purpose |
 |---|---|---|
-| Architecture Corpus | 24–36 docs | Design validation. Must cover: legal, policy/SOP, technical Markdown, table-heavy PDF, FAQ |
-| Legal Regression Pack | 12–20 docs | Stress legal citation, cross-reference, version reasoning |
-| Production Shadow | Small, governed | Prevent overfitting to public benchmark style |
+| Architecture Corpus | 29 docs | Design validation across legal, policy/SOP, technical Markdown, table-heavy PDF, and FAQ archetypes |
+| Legal Regression Pack | 12 docs | Stress legal citation, cross-reference, and version/status reasoning |
+| Production Shadow | 6 docs | Exercise representative deployment documents and governed provenance |
 
 ---
 
@@ -136,7 +135,20 @@ Types: `parent`, `child`, `next`, `previous`, `references`, `defines`, `exceptio
 
 Main FTS5 fields: `title`, `heading_path`, `normalized_text`, `vi_segmented_text`, `glossary_terms`, `table_text`
 
-Side index: `ascii_folded_text`, alias `surface_form`/`canonical_form`, identifiers, short codes
+Side index: `ascii_folded_text`, alias `surface_form`/`canonical_form`,
+identifiers, source-facing DVC/TVPL codes, short codes, and table shadows.
+
+Retrieval behavior includes:
+
+- governed Vietnamese/English alias expansion from `aliases/core.csv` and
+  built-in seed aliases,
+- exact identifier candidate routing for DVC procedure codes and legal
+  document numbers,
+- source-pair routing for multi-document DVC/TVPL questions,
+- metadata penalties for acquisition and coverage-tag units,
+- intent boosts for time-limit, form, submission-channel, and result questions,
+- metadata filters for `doc_id`, `doc_family_id`, `doc_type`, `status`, and
+  `version_label`.
 
 ### Tool Contracts
 
@@ -182,6 +194,10 @@ Rule: no more than 40% from auto-generated QA. Rest must be rewritten or human-a
 
 **Metrics:** Recall@k, answer correctness, citation exactness, hallucinated citation count, no-answer precision/recall, p50/p95 latency, tool call count, per-query cost estimate.
 
+The checked-in governed eval file is `eval/synthetic_mvp_seed.jsonl`. It
+contains 80 rewritten questions with zero auto-generated rows and covers all
+seven taxonomy categories.
+
 ---
 
 ## Risk Register
@@ -216,3 +232,7 @@ The system may only move to controlled release when:
 5. No-answer behavior is verified
 6. Shadow corpus is tested
 7. Open risks are documented with owners and mitigations
+8. Project license is selected and consistent between package metadata and README
+
+The current strict release report is `reports/release_gate.json`, with decision
+`go`. The narrative decision report is `reports/release_decision.md`.

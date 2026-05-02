@@ -21,7 +21,7 @@ The objective is complete only when all of these are true:
 Current decision: **complete**.
 
 The implementation machinery, governed inputs, milestone gates, and aggregate
-release audit now pass against the Exa-derived governed corpus and eval set.
+release audit pass against the Exa-derived governed corpus and eval set.
 
 ## Prompt-to-Artifact Checklist
 
@@ -65,7 +65,7 @@ release audit now pass against the Exa-derived governed corpus and eval set.
 | Production Shadow, governed | `docs/IMPLEMENTATION.md` | `corpus/production-shadow/manifest.json` has 6 DVC shadow docs | done |
 | MVP eval set, 80 questions across 7 categories | `docs/IMPLEMENTATION.md` | `eval/synthetic_mvp_seed.jsonl` has 80 rewritten questions across 7 categories | done |
 | No more than 40% auto-generated QA | `docs/IMPLEMENTATION.md` | `evalset validate eval/synthetic_mvp_seed.jsonl` reports `auto_generated_count: 0` | done |
-| Durable completion plan | user objective | `docs/COMPLETION_PLAN.md` maps current blockers to phase commands and done gates | done |
+| Durable completion plan | user objective | `docs/COMPLETION_PLAN.md` maps completion criteria to phase commands and done gates | done |
 | Risk register with owners and mitigations | `docs/IMPLEMENTATION.md` | `docs/RISK_REGISTER.md`, `risks validate --strict-owners`; all owners set to Kieng | done |
 | Project license selected | `README.md`, `pyproject.toml`, `docs/GOVERNED_INPUTS_RUNBOOK.md` | `MIT` in package/readme metadata; `readiness governed`, `gates release`, `reports/governed_readiness.json`, `reports/release_gate.json` | done |
 | Failure review discipline | `docs/IMPLEMENTATION.md` | `src/vn_grounded_qa/decisions.py`, `vn-grounded-qa decisions report`, `reports/m0_decision.md`, `reports/release_decision.md` | done |
@@ -167,8 +167,8 @@ Current governed eval set: 80 rewritten questions, 0 auto-generated.
 - Eval taxonomy validation checks category shape, count totals, and generated
   question limits; eval-set validation loads those rules from
   `eval/taxonomy.yaml` or an explicit `--taxonomy` file.
-- Relaxed validation for the checked-in seven-question smoke eval slice, with
-  strict validation reserved for the required governed 80-question set.
+- Strict validation for the checked-in governed 80-question eval set, with
+  relaxed validation available for experimental slices.
 - Strict eval-set validation enforces the documented authorship rule:
   non-auto-generated rows must declare `source` as human or rewritten.
 - Eval-set validation enforces no-answer row shape: `insufficient_evidence`
@@ -211,7 +211,7 @@ Current governed eval set: 80 rewritten questions, 0 auto-generated.
 - Exa-derived local markdown source files under `corpus/**/extracted/`.
 - Architecture, legal-regression, and production-shadow manifests populated
   from Dịch Vụ Công and Thư Viện Pháp Luật source candidates.
-- Strict governed-input readiness now passes with no blockers.
+- Strict governed-input readiness passes with no blockers.
 - Governed input runbook mapping the remaining corpus, eval, legal, shadow,
   risk-owner, and project-license inputs to exact file contracts and commands.
 - Tests covering the implemented shell.
@@ -228,10 +228,10 @@ work remains outside this completion gate:
 
 ## Final Execution Record
 
-1. **Retrieval tuning:** M2 now reports `go`.
-2. **No-answer and answer validation:** M4 now reports `go`.
+1. **Retrieval tuning:** M2 reports `go`.
+2. **No-answer and answer validation:** M4 reports `go`.
 3. **Parser bakeoff:** M1 is included in the aggregate release check as `go`.
-4. **Baseline and scale:** M5 and M6 now report `go`.
+4. **Baseline and scale:** M5 and M6 report `go`.
 5. **Release decision:** aggregate release reports `go`.
 
 The concrete phase plan and exact completion commands live in
@@ -239,6 +239,6 @@ The concrete phase plan and exact completion commands live in
 
 ## Bottom Line
 
-The project now satisfies the documented completion criteria for the governed
+The project satisfies the documented completion criteria for the governed
 release path. Tests pass, governed readiness has no blockers, M0-M6 gates are
 green, and the aggregate strict release gate is `go`.

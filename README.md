@@ -40,40 +40,56 @@ Key design decisions:
 See [`docs/ADR-001.md`](docs/ADR-001.md) for the full architecture decision record.
 See [`docs/IMPLEMENTATION.md`](docs/IMPLEMENTATION.md) for milestones, schemas, evaluation, and risk.
 
-## Quick orientation
+## Quick Orientation
 
 ```
 docs/
 ├── ADR-001.md          # Architecture decision record (the "why")
 ├── IMPLEMENTATION.md   # Milestones, schemas, eval, risk (the "how")
-└── COMPLETION_PLAN.md  # Current finish plan and release-gate closure path
+└── COMPLETION_PLAN.md  # Governed completion record and release-gate commands
 ```
 
 ## Status
 
-**Runnable sparse-first MVP.** The repository now contains the first implementation slice:
+**Governed sparse-first MVP.** The repository contains a complete local
+implementation and a strict governed release record:
 
 - parser-neutral IR for Markdown, text, and optional PDF ingestion,
-- canonical SQLite store with `documents`, `content_units`, `relations`, and `aliases`,
-- SQLite FTS5 sparse retrieval with Vietnamese normalization, ASCII folding, alias expansion, and table text shadows,
+- `auto`, `fallback`, `docling`, and `marker` parser routes,
+- canonical SQLite store with `documents`, `content_units`, `relations`,
+  `aliases`, and `tool_traces`,
+- SQLite FTS5 sparse retrieval with Vietnamese normalization, ASCII folding,
+  governed alias expansion, identifier-aware routing, metadata filters, and
+  source-pair routing for DVC/TVPL synthesis questions,
 - bounded semantic tool layer with max-call and max-search ceilings,
-- grounded extractive answer contract with citations and explicit insufficient-evidence behavior,
-- JSONL evaluation harness for retrieval, latency, tool-call, and no-answer checks,
-- M0/M1 execution scaffolds: corpus manifest validation and parser bakeoff reports.
-- synthetic architecture corpus generation for local gate development.
-- default `auto` parser routing through Docling, Marker, then local fallback.
-- milestone gate reports for M0 through M6.
-- strict MVP eval-set validation and synthetic 80-question eval generation.
-- risk-register validation and legal/shadow pack manifest validation.
-- governed-input readiness report for release-blocking corpus, eval, pack, risk-owner, and license gaps.
+- grounded extractive answer contract with source-facing citation anchors,
+  confidence labels, contradiction checks, version checks, and explicit
+  insufficient-evidence behavior,
+- authored 80-question MVP eval set across seven taxonomy categories,
+- JSONL evaluation harness for retrieval, answer correctness, citation
+  exactness, no-answer behavior, latency, tool-call, and cost metrics,
+- architecture corpus, legal regression pack, and production shadow pack
+  manifests backed by local governed sources,
+- M0-M6 gate reports, thin-RAG baseline comparison, governed readiness report,
+  and strict aggregate release report,
+- risk-register validation, strict deployment-owner checks, and MIT project
+  license validation.
 
-The full milestone program in `docs/IMPLEMENTATION.md` is not complete yet. See
-`docs/IMPLEMENTATION_MATRIX.md`, `docs/MILESTONE_ROADMAP.md`, and
-`docs/GOVERNED_INPUTS_RUNBOOK.md`, `docs/COMPLETION_PLAN.md`, plus
-`reports/completion_audit.md`, for the live gap list, governed-input handoff,
-completion audit, and execution order.
-The checked-in `eval/synthetic_mvp_seed.jsonl` is a seven-question smoke slice;
-use `evalset seed-synthetic` to generate the synthetic 80-question fixture.
+Current release evidence lives in `reports/`:
+
+| Artifact | Current result |
+|---|---|
+| `reports/governed_readiness.json` | `ok: true`, blockers `0` |
+| `reports/m2_gate.json` | retrieval `go`, Recall@10/20 checks `1.000` |
+| `reports/m3_gate.json` | bounded tool orchestration `go` |
+| `reports/m4_gate.json` | answer correctness `1.000`, no-answer precision `1.000` |
+| `reports/m5_gate.json` | sparse baseline comparison `go` |
+| `reports/m6_gate.json` | scale/provenance gate `go` |
+| `reports/release_gate.json` | strict release `go` |
+
+See `reports/completion_audit.md` for the requirement-by-requirement release
+audit and `docs/COMPLETION_PLAN.md` for the reproducible completion command
+sequence.
 
 ## Quick start
 
@@ -103,61 +119,50 @@ Run tests:
 python3 -m pytest -q
 ```
 
-Validate the current seed corpus manifest:
+Validate the architecture corpus manifest:
 
 ```bash
-PYTHONPATH=src python3 -m vn_grounded_qa.cli corpus validate corpus/architecture/manifest.json --relaxed
 PYTHONPATH=src python3 -m vn_grounded_qa.cli corpus validate corpus/architecture/manifest.json
+PYTHONPATH=src python3 -m vn_grounded_qa.cli corpus validate corpus/architecture/manifest.json --relaxed
 ```
 
-The strict command is expected to fail until the M0 architecture corpus contains
-24-36 governed documents across all required archetypes.
-
-Run the current fallback parser scorecard:
+Run parser scorecards:
 
 ```bash
-PYTHONPATH=src python3 -m vn_grounded_qa.cli bakeoff fallback corpus/architecture/manifest.json --out reports/m1_fallback_seed.json
 PYTHONPATH=src python3 -m vn_grounded_qa.cli bakeoff parser corpus/architecture/manifest.json --parser auto
+PYTHONPATH=src python3 -m vn_grounded_qa.cli bakeoff parser corpus/architecture/manifest.json --parser fallback
 PYTHONPATH=src python3 -m vn_grounded_qa.cli bakeoff parser corpus/architecture/manifest.json --parser docling
 PYTHONPATH=src python3 -m vn_grounded_qa.cli bakeoff parser corpus/architecture/manifest.json --parser marker
+PYTHONPATH=src python3 -m vn_grounded_qa.cli bakeoff fallback corpus/architecture/manifest.json --out reports/m1_fallback_seed.json
 ```
 
-Generate and exercise a full synthetic 25-document architecture corpus in a
-temporary directory:
+Ingest the governed corpus and run the release gate ladder:
 
 ```bash
-TMPDIR=$(mktemp -d)
-PYTHONPATH=src python3 -m vn_grounded_qa.cli corpus seed-synthetic "$TMPDIR/architecture/manifest.json"
-PYTHONPATH=src python3 -m vn_grounded_qa.cli corpus pack-seed-synthetic "$TMPDIR/legal/manifest.json" --type legal_regression
-PYTHONPATH=src python3 -m vn_grounded_qa.cli corpus pack-seed-synthetic "$TMPDIR/shadow/manifest.json" --type production_shadow
-PYTHONPATH=src python3 -m vn_grounded_qa.cli evalset seed-synthetic "$TMPDIR/mvp80.jsonl"
-printf 'license = {text = "MIT"}\n' > "$TMPDIR/pyproject.toml"
-printf '# Synthetic verification\n\n## License\n\nMIT\n' > "$TMPDIR/README.md"
-PYTHONPATH=src python3 -m vn_grounded_qa.cli --db "$TMPDIR/grounded.db" ingest-manifest "$TMPDIR/architecture/manifest.json"
-PYTHONPATH=src python3 -m vn_grounded_qa.cli --db "$TMPDIR/grounded.db" eval "$TMPDIR/mvp80.jsonl" --k 10
-PYTHONPATH=src python3 -m vn_grounded_qa.cli gates m0 --manifest "$TMPDIR/architecture/manifest.json" --out "$TMPDIR/m0_gate.json"
-PYTHONPATH=src python3 -m vn_grounded_qa.cli gates m1 --manifest "$TMPDIR/architecture/manifest.json" --parser fallback --out "$TMPDIR/m1_gate.json"
-PYTHONPATH=src python3 -m vn_grounded_qa.cli gates m2 --db "$TMPDIR/grounded.db" --eval "$TMPDIR/mvp80.jsonl" --out "$TMPDIR/m2_gate.json"
-PYTHONPATH=src python3 -m vn_grounded_qa.cli gates m3 --db "$TMPDIR/grounded.db" --eval "$TMPDIR/mvp80.jsonl" --out "$TMPDIR/m3_gate.json"
-PYTHONPATH=src python3 -m vn_grounded_qa.cli gates m4 --db "$TMPDIR/grounded.db" --eval "$TMPDIR/mvp80.jsonl" --out "$TMPDIR/m4_gate.json"
-PYTHONPATH=src python3 -m vn_grounded_qa.cli gates m5 --db "$TMPDIR/grounded.db" --eval "$TMPDIR/mvp80.jsonl" --out "$TMPDIR/m5_gate.json"
-PYTHONPATH=src python3 -m vn_grounded_qa.cli --db "$TMPDIR/grounded.db" baselines report --eval "$TMPDIR/mvp80.jsonl" --out "$TMPDIR/m5_baseline_comparison.md"
-PYTHONPATH=src python3 -m vn_grounded_qa.cli gates m6 --db "$TMPDIR/grounded.db" --base-eval "$TMPDIR/mvp80.jsonl" --scale-eval "$TMPDIR/mvp80.jsonl" --out "$TMPDIR/m6_gate.json"
-PYTHONPATH=src python3 -m vn_grounded_qa.cli gates release --manifest "$TMPDIR/architecture/manifest.json" --db "$TMPDIR/grounded.db" --eval "$TMPDIR/mvp80.jsonl" --scale-eval "$TMPDIR/mvp80.jsonl" --legal-pack "$TMPDIR/legal/manifest.json" --shadow-pack "$TMPDIR/shadow/manifest.json" --pyproject "$TMPDIR/pyproject.toml" --readme "$TMPDIR/README.md" --out "$TMPDIR/release_gate.json"
-```
+GOVERNED_DB="governed.db"
+PYTHONPATH=src python3 -m vn_grounded_qa.cli --db "$GOVERNED_DB" init
+PYTHONPATH=src python3 -m vn_grounded_qa.cli --db "$GOVERNED_DB" ingest-manifest corpus/architecture/manifest.json
+PYTHONPATH=src python3 -m vn_grounded_qa.cli --db "$GOVERNED_DB" eval eval/synthetic_mvp_seed.jsonl --k 10
 
-For controlled release, add `--strict-risk-owners` after deployment owners have
-replaced role placeholders in `docs/RISK_REGISTER.md`, and keep the selected
-project license aligned between `pyproject.toml` and this README.
+PYTHONPATH=src python3 -m vn_grounded_qa.cli readiness governed --eval eval/synthetic_mvp_seed.jsonl --strict-risk-owners --out reports/governed_readiness.json
+PYTHONPATH=src python3 -m vn_grounded_qa.cli gates m0 --manifest corpus/architecture/manifest.json --out reports/m0_gate.json
+PYTHONPATH=src python3 -m vn_grounded_qa.cli gates m1 --manifest corpus/architecture/manifest.json --parser auto --out reports/m1_gate.json
+PYTHONPATH=src python3 -m vn_grounded_qa.cli gates m2 --db "$GOVERNED_DB" --eval eval/synthetic_mvp_seed.jsonl --out reports/m2_gate.json
+PYTHONPATH=src python3 -m vn_grounded_qa.cli gates m3 --db "$GOVERNED_DB" --eval eval/synthetic_mvp_seed.jsonl --out reports/m3_gate.json
+PYTHONPATH=src python3 -m vn_grounded_qa.cli gates m4 --db "$GOVERNED_DB" --eval eval/synthetic_mvp_seed.jsonl --out reports/m4_gate.json
+PYTHONPATH=src python3 -m vn_grounded_qa.cli gates m5 --db "$GOVERNED_DB" --eval eval/synthetic_mvp_seed.jsonl --out reports/m5_gate.json
+PYTHONPATH=src python3 -m vn_grounded_qa.cli gates m6 --db "$GOVERNED_DB" --base-eval eval/synthetic_mvp_seed.jsonl --scale-eval eval/synthetic_mvp_seed.jsonl --out reports/m6_gate.json
+PYTHONPATH=src python3 -m vn_grounded_qa.cli gates release --manifest corpus/architecture/manifest.json --db "$GOVERNED_DB" --eval eval/synthetic_mvp_seed.jsonl --scale-eval eval/synthetic_mvp_seed.jsonl --legal-pack corpus/legal-regression/manifest.json --shadow-pack corpus/production-shadow/manifest.json --strict-risk-owners --pyproject pyproject.toml --readme README.md --out reports/release_gate.json
+```
 
 Validate release-supporting governance artifacts:
 
 ```bash
-PYTHONPATH=src python3 -m vn_grounded_qa.cli evalset validate eval/synthetic_mvp_seed.jsonl --relaxed
-PYTHONPATH=src python3 -m vn_grounded_qa.cli risks validate
+PYTHONPATH=src python3 -m vn_grounded_qa.cli evalset validate eval/synthetic_mvp_seed.jsonl
+PYTHONPATH=src python3 -m vn_grounded_qa.cli risks validate --strict-owners
 PYTHONPATH=src python3 -m vn_grounded_qa.cli corpus pack-validate corpus/legal-regression/manifest.json --type legal_regression
 PYTHONPATH=src python3 -m vn_grounded_qa.cli corpus pack-validate corpus/production-shadow/manifest.json --type production_shadow
-PYTHONPATH=src python3 -m vn_grounded_qa.cli readiness governed --eval eval/mvp80_governed.jsonl --strict-risk-owners --out reports/governed_readiness.json
+PYTHONPATH=src python3 -m vn_grounded_qa.cli readiness governed --eval eval/synthetic_mvp_seed.jsonl --strict-risk-owners --out reports/governed_readiness.json
 ```
 
 Write narrative go/revise/stop decision reports from gate JSON:
@@ -173,8 +178,72 @@ Import a domain alias catalog:
 PYTHONPATH=src python3 -m vn_grounded_qa.cli --db grounded.db alias-import aliases/core.csv
 ```
 
-This synthetic corpus is for engineering verification only. It does not replace
-the governed architecture corpus required for release gates.
+Generate synthetic fixtures for local engineering experiments:
+
+```bash
+TMPDIR=$(mktemp -d)
+PYTHONPATH=src python3 -m vn_grounded_qa.cli corpus seed-synthetic "$TMPDIR/architecture/manifest.json" --docs-per-archetype 5
+PYTHONPATH=src python3 -m vn_grounded_qa.cli corpus pack-seed-synthetic "$TMPDIR/legal/manifest.json" --type legal_regression
+PYTHONPATH=src python3 -m vn_grounded_qa.cli corpus pack-seed-synthetic "$TMPDIR/shadow/manifest.json" --type production_shadow
+PYTHONPATH=src python3 -m vn_grounded_qa.cli evalset seed-synthetic "$TMPDIR/mvp80.jsonl"
+```
+
+## CLI Reference
+
+Global option:
+
+- `--db PATH`: SQLite database path, default `grounded.db`
+
+Core commands:
+
+- `init`: create or migrate the SQLite schema.
+- `schema`: print schema metadata.
+- `ingest PATH... --parser {auto,fallback,docling,marker}`: ingest files or
+  directories.
+- `ingest-manifest MANIFEST --parser {auto,fallback,docling,marker}`: ingest
+  all files registered in a corpus manifest.
+- `alias SURFACE CANONICAL --domain DOMAIN --type TYPE`: add a term alias.
+- `alias-import CSV`: import aliases from a CSV catalog.
+- `search QUERY --top-k N --filter KEY=VALUE`: search evidence units. Filters
+  support `doc_id`, `doc_family_id`, `doc_type`, `status`, and
+  `version_label`.
+- `ask QUESTION --top-k N --trace-id ID`: answer with citations and optionally
+  persist tool calls under a trace ID.
+- `eval EXAMPLES --k N`: run retrieval and answer evaluation over JSONL rows.
+
+Governance and eval commands:
+
+- `evalset validate EXAMPLES --taxonomy PATH --relaxed`
+- `evalset seed-synthetic EXAMPLES`
+- `risks validate --path PATH --strict-owners`
+- `readiness governed --manifest PATH --eval PATH --taxonomy PATH
+  --legal-pack PATH --shadow-pack PATH --risk-register PATH --pyproject PATH
+  --readme PATH --strict-risk-owners --out PATH`
+
+Corpus and parser commands:
+
+- `corpus validate MANIFEST --relaxed`
+- `corpus template MANIFEST`
+- `corpus seed-synthetic MANIFEST --docs-per-archetype N`
+- `corpus pack-template MANIFEST --type {legal_regression,production_shadow}`
+- `corpus pack-validate MANIFEST --type {legal_regression,production_shadow}`
+- `corpus pack-seed-synthetic MANIFEST --type {legal_regression,production_shadow}`
+- `bakeoff parser MANIFEST --parser {auto,fallback,docling,marker} --out PATH`
+- `bakeoff fallback MANIFEST --out PATH`
+
+Gate, trace, and report commands:
+
+- `gates m0 --manifest PATH --taxonomy PATH --out PATH`
+- `gates m1 --manifest PATH --parser {auto,fallback,docling,marker} --out PATH`
+- `gates m2|m3|m4|m5 --db PATH --eval PATH --out PATH`
+- `gates m6 --db PATH --base-eval PATH --scale-eval PATH --out PATH`
+- `gates release --manifest PATH --db PATH --eval PATH --scale-eval PATH
+  --parser {auto,fallback,docling,marker} --legal-pack PATH --shadow-pack PATH
+  --pyproject PATH --readme PATH --strict-risk-owners --out PATH`
+- `decisions report GATE_JSON --out PATH --stop-reason TEXT`
+- `traces list`
+- `traces show TRACE_ID`
+- `baselines report --eval PATH --out PATH`
 
 ## References
 

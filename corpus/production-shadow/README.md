@@ -1,9 +1,10 @@
 # Production Shadow Pack
 
-The implementation plan requires a small governed production shadow corpus to
-prevent overfitting to public benchmark style.
+The production shadow pack contains governed representative deployment
+documents that help prevent overfitting to public benchmark style. The
+checked-in pack registers 6 documents.
 
-Create a template:
+Create a template for a replacement or experimental pack:
 
 ```bash
 PYTHONPATH=src python3 -m vn_grounded_qa.cli corpus pack-template corpus/production-shadow/manifest.json --type production_shadow

@@ -1,8 +1,8 @@
 # Architecture Corpus
 
-This folder is reserved for the M0 architecture corpus manifest and source
-fixtures. The production M0 gate requires 24-36 registered documents across all
-five archetypes:
+This folder contains the M0 architecture corpus manifest and source fixtures.
+The governed architecture corpus registers 29 documents across all five
+required archetypes:
 
 - `legal`
 - `policy_sop`
@@ -10,7 +10,7 @@ five archetypes:
 - `table_pdf`
 - `faq`
 
-Use the validator before closing M0:
+Use the validator before running M0 or the aggregate release gate:
 
 ```bash
 PYTHONPATH=src python3 -m vn_grounded_qa.cli corpus validate corpus/architecture/manifest.json

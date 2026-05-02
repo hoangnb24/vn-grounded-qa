@@ -3,9 +3,8 @@
 **Status:** complete; controlled release gate is `go`  
 **Last refreshed:** 2026-05-02
 
-This is the completion record for the Vietnamese grounded QA application from
-the current codebase state. The strict release gate is now `go` on governed
-inputs.
+This is the completion record for the Vietnamese grounded QA application. The
+strict release gate is `go` on governed inputs.
 
 ## Success Criteria
 
