@@ -1,0 +1,48 @@
+{
+  "ok": true,
+  "items": [
+    {
+      "name": "architecture corpus ready",
+      "ok": true,
+      "evidence": "corpus/architecture/manifest.json:26 docs; archetypes={'faq': 3, 'legal': 9, 'policy_sop': 7, 'table_pdf': 5, 'technical_markdown': 2}",
+      "details": []
+    },
+    {
+      "name": "evaluation taxonomy ready",
+      "ok": true,
+      "evidence": "eval/taxonomy.yaml",
+      "details": []
+    },
+    {
+      "name": "governed MVP eval set ready",
+      "ok": true,
+      "evidence": "eval/synthetic_mvp_seed.jsonl:80 questions; auto_generated=0; categories={'mixed_vi_en': 10, 'multidoc_synthesis': 10, 'multihop_single_doc': 10, 'no_answer': 10, 'single_unit_factual': 20, 'table_list_structure': 10, 'version_status_exception': 10}",
+      "details": []
+    },
+    {
+      "name": "legal regression pack ready",
+      "ok": true,
+      "evidence": "corpus/legal-regression/manifest.json:12 docs",
+      "details": []
+    },
+    {
+      "name": "production shadow pack ready",
+      "ok": true,
+      "evidence": "corpus/production-shadow/manifest.json:6 docs",
+      "details": []
+    },
+    {
+      "name": "risk register ready",
+      "ok": true,
+      "evidence": "docs/RISK_REGISTER.md:8 risks; statuses={'open': 8}",
+      "details": []
+    },
+    {
+      "name": "project license selected",
+      "ok": true,
+      "evidence": "pyproject.toml; README.md",
+      "details": []
+    }
+  ],
+  "blockers": []
+}

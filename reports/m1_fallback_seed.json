@@ -1,0 +1,76 @@
+{
+  "ok": true,
+  "parser_name": "fallback",
+  "document_count": 2,
+  "parse_success_rate": 1.0,
+  "heading_path_recovery_rate": 1.0,
+  "provenance_completeness_rate": 1.0,
+  "archetype_summary": {
+    "technical_markdown": {
+      "document_count": 2.0,
+      "parse_success_rate": 1.0,
+      "heading_path_recovery_rate": 1.0,
+      "provenance_completeness_rate": 1.0
+    }
+  },
+  "documents": [
+    {
+      "doc_id": "seed_technical_markdown_adr",
+      "archetype": "technical_markdown",
+      "parser_name": "markdown-lite",
+      "parse_success": true,
+      "fatal_error": "",
+      "block_count": 93,
+      "unit_count": 35,
+      "heading_path_usable": true,
+      "provenance_complete": true,
+      "expected_heading_paths": [],
+      "recovered_heading_paths": [
+        "ADR-001 — Architecture Direction",
+        "ADR-001 — Architecture Direction > Decision",
+        "ADR-001 — Architecture Direction > Decision triggers for re-evaluation",
+        "ADR-001 — Architecture Direction > Rejected starting points",
+        "ADR-001 — Architecture Direction > Upgrade path (in order)",
+        "ADR-001 — Architecture Direction > Why Vietnamese changes the design",
+        "ADR-001 — Architecture Direction > Why sparse retrieval as default",
+        "ADR-001 — Architecture Direction > Why this architecture"
+      ],
+      "missing_heading_paths": []
+    },
+    {
+      "doc_id": "seed_technical_markdown_implementation",
+      "archetype": "technical_markdown",
+      "parser_name": "markdown-lite",
+      "parse_success": true,
+      "fatal_error": "",
+      "block_count": 231,
+      "unit_count": 82,
+      "heading_path_usable": true,
+      "provenance_complete": true,
+      "expected_heading_paths": [],
+      "recovered_heading_paths": [
+        "Implementation Plan — Milestones, Schemas, Evaluation, Risk",
+        "Implementation Plan — Milestones, Schemas, Evaluation, Risk > Corpus Strategy",
+        "Implementation Plan — Milestones, Schemas, Evaluation, Risk > Evaluation",
+        "Implementation Plan — Milestones, Schemas, Evaluation, Risk > Failure Review Discipline",
+        "Implementation Plan — Milestones, Schemas, Evaluation, Risk > Milestones",
+        "Implementation Plan — Milestones, Schemas, Evaluation, Risk > Milestones > M0 — Scope Freeze",
+        "Implementation Plan — Milestones, Schemas, Evaluation, Risk > Milestones > M1 — Ingestion & Parser Bakeoff",
+        "Implementation Plan — Milestones, Schemas, Evaluation, Risk > Milestones > M2 — Sparse Retrieval Baseline",
+        "Implementation Plan — Milestones, Schemas, Evaluation, Risk > Milestones > M3 — Tool Layer & Bounded Orchestration",
+        "Implementation Plan — Milestones, Schemas, Evaluation, Risk > Milestones > M4 — End-to-End MVP",
+        "Implementation Plan — Milestones, Schemas, Evaluation, Risk > Milestones > M5 — Thin RAG Baseline Comparison",
+        "Implementation Plan — Milestones, Schemas, Evaluation, Risk > Milestones > M6 — Scale & Upgrade Decision",
+        "Implementation Plan — Milestones, Schemas, Evaluation, Risk > Release Gates",
+        "Implementation Plan — Milestones, Schemas, Evaluation, Risk > Risk Register",
+        "Implementation Plan — Milestones, Schemas, Evaluation, Risk > Schema (Core Entities) > Answer Contract",
+        "Implementation Plan — Milestones, Schemas, Evaluation, Risk > Schema (Core Entities) > Canonical Store",
+        "Implementation Plan — Milestones, Schemas, Evaluation, Risk > Schema (Core Entities) > Parsed IR",
+        "Implementation Plan — Milestones, Schemas, Evaluation, Risk > Schema (Core Entities) > Search Index",
+        "Implementation Plan — Milestones, Schemas, Evaluation, Risk > Schema (Core Entities) > Tool Contracts"
+      ],
+      "missing_heading_paths": []
+    }
+  ],
+  "gate_errors": []
+}

@@ -1,0 +1,36 @@
+{
+  "milestone": "M3",
+  "decision": "go",
+  "checks": [
+    {
+      "name": "avg tool calls <= 4",
+      "ok": true,
+      "evidence": "2.000",
+      "details": []
+    },
+    {
+      "name": "p95 tool calls <= 6",
+      "ok": true,
+      "evidence": "2.000",
+      "details": []
+    },
+    {
+      "name": "argument error rate < 2%",
+      "ok": true,
+      "evidence": "0.000",
+      "details": []
+    },
+    {
+      "name": "infinite loop rate = 0",
+      "ok": true,
+      "evidence": "0.000",
+      "details": []
+    },
+    {
+      "name": "tool limit errors = 0",
+      "ok": true,
+      "evidence": "0",
+      "details": []
+    }
+  ]
+}

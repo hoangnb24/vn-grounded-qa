@@ -1,0 +1,36 @@
+{
+  "milestone": "M1",
+  "decision": "go",
+  "checks": [
+    {
+      "name": "architecture corpus ready",
+      "ok": true,
+      "evidence": "corpus/architecture/manifest.json",
+      "details": []
+    },
+    {
+      "name": "fallback parser bakeoff",
+      "ok": true,
+      "evidence": "corpus/architecture/manifest.json",
+      "details": []
+    },
+    {
+      "name": "parse success >= 90%",
+      "ok": true,
+      "evidence": "1.000",
+      "details": []
+    },
+    {
+      "name": "heading path recovery >= 85%",
+      "ok": true,
+      "evidence": "1.000",
+      "details": []
+    },
+    {
+      "name": "provenance completeness = 100%",
+      "ok": true,
+      "evidence": "1.000",
+      "details": []
+    }
+  ]
+}

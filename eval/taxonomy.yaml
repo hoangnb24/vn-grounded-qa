@@ -1,0 +1,83 @@
+version: 1
+name: mvp_grounded_qa_taxonomy
+description: >
+  Evaluation taxonomy for the Vietnamese Grounded QA MVP. The concrete MVP eval
+  set must contain 80 questions, with no more than 40 percent auto-generated.
+
+categories:
+  - id: single_unit_factual
+    name: Single-unit factual / paraphrase
+    required_count: 20
+    target_capability: Retrieve one evidence unit and answer without synthesis.
+    expected_gold_fields:
+      - expected_unit_ids
+      - expected_answer_points
+      - expected_citation_unit_ids
+
+  - id: mixed_vi_en
+    name: Vietnamese + light English mixing
+    required_count: 10
+    target_capability: Resolve Vietnamese query terms mixed with acronyms, UI labels, and English product terms.
+    expected_gold_fields:
+      - expected_unit_ids
+      - aliases_or_terms
+      - expected_answer_points
+
+  - id: table_list_structure
+    name: Table / list / structure-heavy
+    required_count: 10
+    target_capability: Retrieve structured rows, list items, and table text shadows.
+    expected_gold_fields:
+      - expected_unit_ids
+      - expected_row_or_item
+      - expected_citation_unit_ids
+
+  - id: multihop_single_doc
+    name: Multi-hop within one document
+    required_count: 10
+    target_capability: Combine adjacent or related units within one document.
+    expected_gold_fields:
+      - expected_component_unit_ids
+      - expected_answer_points
+
+  - id: multidoc_synthesis
+    name: Multi-document synthesis
+    required_count: 10
+    target_capability: Combine evidence from multiple registered documents without inventing joins.
+    expected_gold_fields:
+      - expected_component_unit_ids
+      - expected_doc_ids
+      - expected_answer_points
+
+  - id: version_status_exception
+    name: Version / status / exception
+    required_count: 10
+    target_capability: Resolve applicable versions, document status, exceptions, supersession, and amendments.
+    expected_gold_fields:
+      - as_of
+      - expected_doc_id
+      - expected_unit_ids
+      - expected_answer_points
+
+  - id: no_answer
+    name: No-answer / insufficient evidence
+    required_count: 10
+    target_capability: Refuse unsupported answers and explain insufficient evidence.
+    expected_gold_fields:
+      - insufficient_evidence
+      - disallowed_answer_points
+
+rules:
+  total_required_questions: 80
+  max_auto_generated_fraction: 0.4
+  required_metrics:
+    - recall_at_k
+    - answer_correctness
+    - citation_exactness
+    - hallucinated_citation_count
+    - no_answer_precision
+    - no_answer_recall
+    - p50_latency_ms
+    - p95_latency_ms
+    - tool_call_count
+    - per_query_cost_estimate

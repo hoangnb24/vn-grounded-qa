@@ -1,0 +1,235 @@
+{
+  "version": 1,
+  "name": "legal_regression",
+  "description": "Exa-assisted legal regression pack for citation, cross-reference, and version-status behavior.",
+  "documents": [
+    {
+      "doc_id": "tvpl-nd-168-2025-enterprise-registration",
+      "title": "Nghị định 168/2025/NĐ-CP về đăng ký doanh nghiệp",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "extracted/thuvienphapluat/tvpl-nd-168-2025-enterprise-registration.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Doanh-nghiep/Nghi-dinh-168-2025-ND-CP-dang-ky-doanh-nghiep-623074.aspx",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted TVPL legal source extraction; original/current legal source verification remains required before production redistribution."
+    },
+    {
+      "doc_id": "tvpl-nd-69-2024-eid-authentication",
+      "title": "Nghị định 69/2024/NĐ-CP về định danh và xác thực điện tử",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "extracted/thuvienphapluat/tvpl-nd-69-2024-eid-authentication.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Cong-nghe-thong-tin/Nghi-dinh-69-2024-ND-CP-quy-dinh-dinh-danh-xac-thuc-dien-tu-597437.aspx?anchor=bieumau_ms_tk01_2",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted TVPL legal source extraction; original/current legal source verification remains required before production redistribution."
+    },
+    {
+      "doc_id": "tvpl-tt-86-2024-tax-registration",
+      "title": "Thông tư 86/2024/TT-BTC hướng dẫn đăng ký thuế",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "extracted/thuvienphapluat/tvpl-tt-86-2024-tax-registration.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Thue-Phi-Le-Phi/Thong-tu-86-2024-TT-BTC-dang-ky-thue-565309.aspx",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted TVPL legal source extraction; original/current legal source verification remains required before production redistribution."
+    },
+    {
+      "doc_id": "tvpl-nd-123-2020-invoices-records",
+      "title": "Nghị định 123/2020/NĐ-CP quy định hóa đơn, chứng từ",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "extracted/thuvienphapluat/tvpl-nd-123-2020-invoices-records.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Ke-toan-Kiem-toan/Decree-123-2020-ND-CP-prescribing-invoices-and-records-457847.aspx?v=d",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted TVPL legal source extraction; original/current legal source verification remains required before production redistribution."
+    },
+    {
+      "doc_id": "tvpl-nd-01-2021-enterprise-registration-old",
+      "title": "Nghị định 01/2021/NĐ-CP đăng ký doanh nghiệp",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "extracted/thuvienphapluat/tvpl-nd-01-2021-enterprise-registration-old.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Doanh-nghiep/Nghi-dinh-01-2021-ND-CP-dang-ky-doanh-nghiep-283247.aspx",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted TVPL legal source extraction; original/current legal source verification remains required before production redistribution."
+    },
+    {
+      "doc_id": "tvpl-tt-68-2025-business-registration-forms",
+      "title": "Thông tư 68/2025/TT-BTC về biểu mẫu đăng ký doanh nghiệp, hộ kinh doanh",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "extracted/thuvienphapluat/tvpl-tt-68-2025-business-registration-forms.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Doanh-nghiep/Thong-tu-68-2025-TT-BTC-bieu-mau-su-dung-trong-dang-ky-doanh-nghiep-663263.aspx",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted TVPL legal source extraction; original/current legal source verification remains required before production redistribution."
+    },
+    {
+      "doc_id": "tvpl-qd-1271-2025-einvoice-data",
+      "title": "Quyết định 1271/QĐ-CT năm 2025 về dữ liệu nghiệp vụ hóa đơn điện tử",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "extracted/thuvienphapluat/tvpl-qd-1271-2025-einvoice-data.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Thue-Phi-Le-Phi/Quyet-dinh-1271-QD-CT-2025-thanh-phan-chua-du-lieu-nghiep-vu-hoa-don-chung-tu-dien-tu-659116.aspx",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted TVPL legal source extraction; original/current legal source verification remains required before production redistribution."
+    },
+    {
+      "doc_id": "tvpl-tt-18-2026-household-business-tax",
+      "title": "Thông tư 18/2026/TT-BTC về hồ sơ, thủ tục quản lý thuế hộ kinh doanh",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "extracted/thuvienphapluat/tvpl-tt-18-2026-household-business-tax.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Doanh-nghiep/Thong-tu-18-2026-TT-BTC-ho-so-thu-tuc-quan-ly-thue-ho-kinh-doanh-ca-nhan-kinh-doanh-684668.aspx?anchor=bieumau_ms_01_bk_stk_1",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted TVPL legal source extraction; original/current legal source verification remains required before production redistribution."
+    },
+    {
+      "doc_id": "tvpl-nd-78-2015-enterprise-registration-history",
+      "title": "Nghị định 78/2015/NĐ-CP đăng ký doanh nghiệp",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "extracted/thuvienphapluat/tvpl-nd-78-2015-enterprise-registration-history.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Doanh-nghiep/Nghi-dinh-78-2015-ND-CP-dang-ky-doanh-nghiep-290547.aspx?anchor=dieu_66",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted TVPL legal source extraction; original/current legal source verification remains required before production redistribution."
+    },
+    {
+      "doc_id": "tvpl-qd-443-tax-registration-process",
+      "title": "Quyết định 443/QĐ-TCT quy trình quản lý đăng ký thuế",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "extracted/thuvienphapluat/tvpl-qd-443-tax-registration-process.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Thue-Phi-Le-Phi/Quyet-dinh-443-QD-TCT-quy-trinh-quan-ly-dang-ky-thue-88294.aspx",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted TVPL legal source extraction; original/current legal source verification remains required before production redistribution."
+    },
+    {
+      "doc_id": "tvpl-nd-43-2010-enterprise-registration-history",
+      "title": "Nghị định 43/2010/NĐ-CP đăng ký doanh nghiệp",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "extracted/thuvienphapluat/tvpl-nd-43-2010-enterprise-registration-history.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Doanh-nghiep/Nghi-dinh-43-2010-ND-CP-dang-ky-doanh-nghiep-104230.aspx",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted TVPL legal source extraction; original/current legal source verification remains required before production redistribution."
+    },
+    {
+      "doc_id": "tvpl-tt-21-2026-tax-admin-amendment",
+      "title": "Thông tư 21/2026/TT-BTC sửa đổi Thông tư 80/2021/TT-BTC",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "extracted/thuvienphapluat/tvpl-tt-21-2026-tax-admin-amendment.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Thue-Phi-Le-Phi/Thong-tu-21-2026-TT-BT%d0%a1-sua-doi-Thong-tu-80-2021-TT-BTC-huong-dan-Luat-Quan-ly-thue-697953.aspx?tab=1",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted TVPL legal source extraction; original/current legal source verification remains required before production redistribution."
+    }
+  ]
+}

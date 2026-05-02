@@ -1,0 +1,489 @@
+{
+  "version": 1,
+  "name": "architecture_corpus_v1",
+  "description": "Exa-assisted governed architecture corpus candidate for Vietnamese public-service grounded QA.",
+  "documents": [
+    {
+      "doc_id": "seed_technical_markdown_adr",
+      "title": "ADR-001 Architecture Direction",
+      "doc_type": "technical",
+      "archetype": "technical_markdown",
+      "source_uri": "../../docs/ADR-001.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "MIT",
+      "status": "accepted",
+      "notes": "Repo architecture document used as a local technical markdown archetype."
+    },
+    {
+      "doc_id": "seed_technical_markdown_implementation",
+      "title": "Implementation Plan",
+      "doc_type": "technical",
+      "archetype": "technical_markdown",
+      "source_uri": "../../docs/IMPLEMENTATION.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "MIT",
+      "status": "accepted",
+      "notes": "Repo implementation document used as a local technical markdown archetype."
+    },
+    {
+      "doc_id": "dvc-2-002344-linked-household-business-tax",
+      "title": "Nhóm thủ tục liên thông Đăng ký hộ kinh doanh và Đăng ký thuế của hộ kinh doanh",
+      "doc_type": "procedure",
+      "archetype": "policy_sop",
+      "source_uri": "../../corpus/architecture/extracted/dichvucong/dvc-2-002344-linked-household-business-tax.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://dichvucong.gov.vn/p/home/dvc-chi-tiet-thu-tuc-hanh-chinh.html?ma_thu_tuc=2.002344",
+      "coverage_tags": [
+        "policy_sop",
+        "representative_deployment",
+        "governed_provenance"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "dvc-2-000200-citizen-id-card-14-plus",
+      "title": "Cấp thẻ căn cước cho người từ đủ 14 tuổi trở lên",
+      "doc_type": "procedure",
+      "archetype": "policy_sop",
+      "source_uri": "../../corpus/architecture/extracted/dichvucong/dvc-2-000200-citizen-id-card-14-plus.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://dichvucong.gov.vn/p/home/dvc-chi-tiet-thu-tuc-hanh-chinh.html?ma_thu_tuc=2.000200",
+      "coverage_tags": [
+        "policy_sop",
+        "representative_deployment",
+        "governed_provenance"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "dvc-1-011013-tax-overpayment-no-refund",
+      "title": "Xử lý không hoàn trả số tiền thuế, tiền chậm nộp, tiền phạt nộp thừa",
+      "doc_type": "procedure",
+      "archetype": "policy_sop",
+      "source_uri": "../../corpus/architecture/extracted/dichvucong/dvc-1-011013-tax-overpayment-no-refund.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://dichvucong.gov.vn/p/home/dvc-chi-tiet-thu-tuc-hanh-chinh.html?ma_thu_tuc=1.011013",
+      "coverage_tags": [
+        "policy_sop",
+        "representative_deployment",
+        "governed_provenance"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "dvc-1-010341-einvoice-error-handling",
+      "title": "Xử lý hóa đơn điện tử của cơ quan thuế có sai sót",
+      "doc_type": "procedure",
+      "archetype": "policy_sop",
+      "source_uri": "../../corpus/architecture/extracted/dichvucong/dvc-1-010341-einvoice-error-handling.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://dichvucong.gov.vn/p/home/dvc-chi-tiet-thu-tuc-hanh-chinh.html?ma_thu_tuc=1.010341",
+      "coverage_tags": [
+        "policy_sop",
+        "representative_deployment",
+        "governed_provenance"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "dvc-7169-enterprise-registration-correction",
+      "title": "Hiệu đính thông tin đăng ký doanh nghiệp",
+      "doc_type": "procedure",
+      "archetype": "table_pdf",
+      "source_uri": "../../corpus/architecture/extracted/dichvucong/dvc-7169-enterprise-registration-correction.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://dichvucong.gov.vn/p/home/dvc-tthc-thu-tuc-hanh-chinh-chi-tiet.html?ma_thu_tuc=7169",
+      "coverage_tags": [
+        "table_pdf",
+        "representative_deployment",
+        "governed_provenance"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "dvc-2-002018-reissue-business-certificate",
+      "title": "Cấp lại Giấy chứng nhận đăng ký doanh nghiệp",
+      "doc_type": "procedure",
+      "archetype": "table_pdf",
+      "source_uri": "../../corpus/architecture/extracted/dichvucong/dvc-2-002018-reissue-business-certificate.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://dichvucong.gov.vn/p/home/dvc-chi-tiet-thu-tuc-hanh-chinh.html?ma_thu_tuc=2.002018",
+      "coverage_tags": [
+        "table_pdf",
+        "representative_deployment",
+        "governed_provenance"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "dvc-1-010677-local-household-business-tax",
+      "title": "Đăng ký thành lập hộ kinh doanh và đăng ký thuế tại địa phương",
+      "doc_type": "procedure",
+      "archetype": "table_pdf",
+      "source_uri": "../../corpus/architecture/extracted/dichvucong/dvc-1-010677-local-household-business-tax.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://dichvucong.gov.vn/p/home/dvc-chi-tiet-thu-tuc-hanh-chinh.html?id_tinh_thanh=51&ma_thu_tuc=1.010677",
+      "coverage_tags": [
+        "table_pdf",
+        "representative_deployment",
+        "governed_provenance"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "dvc-2350-household-business-registration",
+      "title": "Đăng ký thành lập hộ kinh doanh",
+      "doc_type": "procedure",
+      "archetype": "table_pdf",
+      "source_uri": "../../corpus/architecture/extracted/dichvucong/dvc-2350-household-business-registration.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://dichvucong.gov.vn/p/home/dvc-tthc-thu-tuc-hanh-chinh-chi-tiet.html?ma_thu_tuc=2350",
+      "coverage_tags": [
+        "table_pdf",
+        "representative_deployment",
+        "governed_provenance"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "dvc-1-010101-citizen-data-extraction",
+      "title": "Khai thác thông tin công dân trong Cơ sở dữ liệu quốc gia về dân cư",
+      "doc_type": "procedure",
+      "archetype": "policy_sop",
+      "source_uri": "../../corpus/architecture/extracted/dichvucong/dvc-1-010101-citizen-data-extraction.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://dichvucong.gov.vn/p/home/dvc-chi-tiet-thu-tuc-hanh-chinh.html?ma_thu_tuc=1.010101",
+      "coverage_tags": [
+        "policy_sop",
+        "representative_deployment",
+        "governed_provenance"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "dvc-1-011411-eid-level-2-national",
+      "title": "Cấp tài khoản định danh điện tử mức độ 02, căn cước điện tử cho công dân Việt Nam",
+      "doc_type": "procedure",
+      "archetype": "policy_sop",
+      "source_uri": "../../corpus/architecture/extracted/dichvucong/dvc-1-011411-eid-level-2-national.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://dichvucong.gov.vn/p/home/dvc-chi-tiet-thu-tuc-nganh-doc.html?ma_thu_tuc=1.011411",
+      "coverage_tags": [
+        "policy_sop",
+        "representative_deployment",
+        "governed_provenance"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "dvc-3-000228-eid-level-2-commune",
+      "title": "Cấp tài khoản định danh điện tử mức độ 02, căn cước điện tử cho công dân Việt Nam cấp xã",
+      "doc_type": "procedure",
+      "archetype": "policy_sop",
+      "source_uri": "../../corpus/architecture/extracted/dichvucong/dvc-3-000228-eid-level-2-commune.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://dichvucong.gov.vn/p/home/dvc-chi-tiet-thu-tuc-nganh-doc.html?ma_thu_tuc=3.000228",
+      "coverage_tags": [
+        "policy_sop",
+        "representative_deployment",
+        "governed_provenance"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "dvc-1-007035-invoice-issuance-notice",
+      "title": "Thông báo phát hành hóa đơn đặt in, tự in, in từ máy tính tiền và hóa đơn điện tử",
+      "doc_type": "procedure",
+      "archetype": "table_pdf",
+      "source_uri": "../../corpus/architecture/extracted/dichvucong/dvc-1-007035-invoice-issuance-notice.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://dichvucong.gov.vn/p/home/dvc-chi-tiet-thu-tuc-nganh-doc.html?ma_thu_tuc=1.007035",
+      "coverage_tags": [
+        "table_pdf",
+        "representative_deployment",
+        "governed_provenance"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "dvc-guide-citizen-business",
+      "title": "Hướng dẫn công dân, doanh nghiệp sử dụng Cổng Dịch vụ công Quốc gia",
+      "doc_type": "guide",
+      "archetype": "faq",
+      "source_uri": "../../corpus/architecture/extracted/dichvucong/dvc-guide-citizen-business.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://dichvucong.gov.vn/p/home/dvc-huong-dan-cong-dan-doanh-nghiep.html",
+      "coverage_tags": [
+        "faq",
+        "representative_deployment",
+        "governed_provenance"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "dvc-faq-common-questions",
+      "title": "Câu hỏi phổ biến trên Cổng Dịch vụ công Quốc gia",
+      "doc_type": "faq",
+      "archetype": "faq",
+      "source_uri": "../../corpus/architecture/extracted/dichvucong/dvc-faq-common-questions.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://dichvucong.gov.vn/p/home/dvc-cau-hoi-pho-bien.html",
+      "coverage_tags": [
+        "faq",
+        "representative_deployment",
+        "governed_provenance"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "dvc-intro-national-public-service-portal",
+      "title": "Giới thiệu Cổng Dịch vụ công Quốc gia",
+      "doc_type": "guide",
+      "archetype": "faq",
+      "source_uri": "../../corpus/architecture/extracted/dichvucong/dvc-intro-national-public-service-portal.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://dichvucong.gov.vn/p./home/dvc-gioi-thieu.html",
+      "coverage_tags": [
+        "faq",
+        "representative_deployment",
+        "governed_provenance"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "tvpl-nd-168-2025-enterprise-registration",
+      "title": "Nghị định 168/2025/NĐ-CP về đăng ký doanh nghiệp",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "../../corpus/legal-regression/extracted/thuvienphapluat/tvpl-nd-168-2025-enterprise-registration.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Doanh-nghiep/Nghi-dinh-168-2025-ND-CP-dang-ky-doanh-nghiep-623074.aspx",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "tvpl-nd-69-2024-eid-authentication",
+      "title": "Nghị định 69/2024/NĐ-CP về định danh và xác thực điện tử",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "../../corpus/legal-regression/extracted/thuvienphapluat/tvpl-nd-69-2024-eid-authentication.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Cong-nghe-thong-tin/Nghi-dinh-69-2024-ND-CP-quy-dinh-dinh-danh-xac-thuc-dien-tu-597437.aspx?anchor=bieumau_ms_tk01_2",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "tvpl-tt-86-2024-tax-registration",
+      "title": "Thông tư 86/2024/TT-BTC hướng dẫn đăng ký thuế",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "../../corpus/legal-regression/extracted/thuvienphapluat/tvpl-tt-86-2024-tax-registration.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Thue-Phi-Le-Phi/Thong-tu-86-2024-TT-BTC-dang-ky-thue-565309.aspx",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "tvpl-nd-123-2020-invoices-records",
+      "title": "Nghị định 123/2020/NĐ-CP quy định hóa đơn, chứng từ",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "../../corpus/legal-regression/extracted/thuvienphapluat/tvpl-nd-123-2020-invoices-records.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Ke-toan-Kiem-toan/Decree-123-2020-ND-CP-prescribing-invoices-and-records-457847.aspx?v=d",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "tvpl-nd-01-2021-enterprise-registration-old",
+      "title": "Nghị định 01/2021/NĐ-CP đăng ký doanh nghiệp",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "../../corpus/legal-regression/extracted/thuvienphapluat/tvpl-nd-01-2021-enterprise-registration-old.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Doanh-nghiep/Nghi-dinh-01-2021-ND-CP-dang-ky-doanh-nghiep-283247.aspx",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "tvpl-tt-68-2025-business-registration-forms",
+      "title": "Thông tư 68/2025/TT-BTC về biểu mẫu đăng ký doanh nghiệp, hộ kinh doanh",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "../../corpus/legal-regression/extracted/thuvienphapluat/tvpl-tt-68-2025-business-registration-forms.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Doanh-nghiep/Thong-tu-68-2025-TT-BTC-bieu-mau-su-dung-trong-dang-ky-doanh-nghiep-663263.aspx",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "tvpl-qd-1271-2025-einvoice-data",
+      "title": "Quyết định 1271/QĐ-CT năm 2025 về dữ liệu nghiệp vụ hóa đơn điện tử",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "../../corpus/legal-regression/extracted/thuvienphapluat/tvpl-qd-1271-2025-einvoice-data.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Thue-Phi-Le-Phi/Quyet-dinh-1271-QD-CT-2025-thanh-phan-chua-du-lieu-nghiep-vu-hoa-don-chung-tu-dien-tu-659116.aspx",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "tvpl-tt-18-2026-household-business-tax",
+      "title": "Thông tư 18/2026/TT-BTC về hồ sơ, thủ tục quản lý thuế hộ kinh doanh",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "../../corpus/legal-regression/extracted/thuvienphapluat/tvpl-tt-18-2026-household-business-tax.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Doanh-nghiep/Thong-tu-18-2026-TT-BTC-ho-so-thu-tuc-quan-ly-thue-ho-kinh-doanh-ca-nhan-kinh-doanh-684668.aspx?anchor=bieumau_ms_01_bk_stk_1",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "tvpl-nd-78-2015-enterprise-registration-history",
+      "title": "Nghị định 78/2015/NĐ-CP đăng ký doanh nghiệp",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "../../corpus/legal-regression/extracted/thuvienphapluat/tvpl-nd-78-2015-enterprise-registration-history.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Doanh-nghiep/Nghi-dinh-78-2015-ND-CP-dang-ky-doanh-nghiep-290547.aspx?anchor=dieu_66",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    }
+  ]
+}

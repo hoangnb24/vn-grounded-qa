@@ -1,0 +1,66 @@
+{
+  "milestone": "Release",
+  "decision": "revise",
+  "checks": [
+    {
+      "name": "corpus registered and provenance-complete",
+      "ok": true,
+      "evidence": "M0=go, M1=go",
+      "details": []
+    },
+    {
+      "name": "parsing benchmarked for all archetypes",
+      "ok": true,
+      "evidence": "M1=go",
+      "details": []
+    },
+    {
+      "name": "retrieval thresholds met",
+      "ok": false,
+      "evidence": "M2=revise",
+      "details": []
+    },
+    {
+      "name": "citation hallucinations = 0",
+      "ok": true,
+      "evidence": "0",
+      "details": []
+    },
+    {
+      "name": "no-answer behavior verified",
+      "ok": false,
+      "evidence": "0.800",
+      "details": []
+    },
+    {
+      "name": "legal regression pack registered",
+      "ok": true,
+      "evidence": "corpus/legal-regression/manifest.json:12",
+      "details": []
+    },
+    {
+      "name": "shadow corpus registered",
+      "ok": true,
+      "evidence": "corpus/production-shadow/manifest.json:6",
+      "details": []
+    },
+    {
+      "name": "shadow or scale corpus tested",
+      "ok": false,
+      "evidence": "M6=revise",
+      "details": []
+    },
+    {
+      "name": "open risks documented with deployment owners/mitigations",
+      "ok": true,
+      "evidence": "docs/RISK_REGISTER.md:8",
+      "details": []
+    },
+    {
+      "name": "project license selected",
+      "ok": true,
+      "evidence": "pyproject.toml; README.md",
+      "details": []
+    }
+  ]
+}

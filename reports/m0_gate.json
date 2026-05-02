@@ -1,0 +1,18 @@
+{
+  "milestone": "M0",
+  "decision": "go",
+  "checks": [
+    {
+      "name": "architecture corpus registered",
+      "ok": true,
+      "evidence": "corpus/architecture/manifest.json",
+      "details": []
+    },
+    {
+      "name": "evaluation taxonomy valid",
+      "ok": true,
+      "evidence": "eval/taxonomy.yaml",
+      "details": []
+    }
+  ]
+}

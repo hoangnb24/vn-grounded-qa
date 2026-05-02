@@ -1,0 +1,115 @@
+{
+  "version": 1,
+  "name": "production_shadow",
+  "description": "Exa-assisted representative DVC production shadow pack with named owner and provenance.",
+  "documents": [
+    {
+      "doc_id": "shadow-dvc-2-002344-linked-household-business-tax",
+      "title": "Nhóm thủ tục liên thông Đăng ký hộ kinh doanh và Đăng ký thuế của hộ kinh doanh",
+      "doc_type": "procedure",
+      "archetype": "policy_sop",
+      "source_uri": "extracted/dichvucong/dvc-2-002344-linked-household-business-tax.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "shadow",
+      "source_url": "https://dichvucong.gov.vn/p/home/dvc-chi-tiet-thu-tuc-hanh-chinh.html?ma_thu_tuc=2.002344",
+      "coverage_tags": [
+        "representative_deployment",
+        "governed_provenance"
+      ],
+      "notes": "Representative DVC production-shadow source acquired with Exa and kept separate from primary training/eval use."
+    },
+    {
+      "doc_id": "shadow-dvc-2-000200-citizen-id-card-14-plus",
+      "title": "Cấp thẻ căn cước cho người từ đủ 14 tuổi trở lên",
+      "doc_type": "procedure",
+      "archetype": "policy_sop",
+      "source_uri": "extracted/dichvucong/dvc-2-000200-citizen-id-card-14-plus.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "shadow",
+      "source_url": "https://dichvucong.gov.vn/p/home/dvc-chi-tiet-thu-tuc-hanh-chinh.html?ma_thu_tuc=2.000200",
+      "coverage_tags": [
+        "representative_deployment",
+        "governed_provenance"
+      ],
+      "notes": "Representative DVC production-shadow source acquired with Exa and kept separate from primary training/eval use."
+    },
+    {
+      "doc_id": "shadow-dvc-1-010341-einvoice-error-handling",
+      "title": "Xử lý hóa đơn điện tử của cơ quan thuế có sai sót",
+      "doc_type": "procedure",
+      "archetype": "policy_sop",
+      "source_uri": "extracted/dichvucong/dvc-1-010341-einvoice-error-handling.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "shadow",
+      "source_url": "https://dichvucong.gov.vn/p/home/dvc-chi-tiet-thu-tuc-hanh-chinh.html?ma_thu_tuc=1.010341",
+      "coverage_tags": [
+        "representative_deployment",
+        "governed_provenance"
+      ],
+      "notes": "Representative DVC production-shadow source acquired with Exa and kept separate from primary training/eval use."
+    },
+    {
+      "doc_id": "shadow-dvc-7169-enterprise-registration-correction",
+      "title": "Hiệu đính thông tin đăng ký doanh nghiệp",
+      "doc_type": "procedure",
+      "archetype": "table_pdf",
+      "source_uri": "extracted/dichvucong/dvc-7169-enterprise-registration-correction.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "shadow",
+      "source_url": "https://dichvucong.gov.vn/p/home/dvc-tthc-thu-tuc-hanh-chinh-chi-tiet.html?ma_thu_tuc=7169",
+      "coverage_tags": [
+        "representative_deployment",
+        "governed_provenance"
+      ],
+      "notes": "Representative DVC production-shadow source acquired with Exa and kept separate from primary training/eval use."
+    },
+    {
+      "doc_id": "shadow-dvc-1-010101-citizen-data-extraction",
+      "title": "Khai thác thông tin công dân trong Cơ sở dữ liệu quốc gia về dân cư",
+      "doc_type": "procedure",
+      "archetype": "policy_sop",
+      "source_uri": "extracted/dichvucong/dvc-1-010101-citizen-data-extraction.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "shadow",
+      "source_url": "https://dichvucong.gov.vn/p/home/dvc-chi-tiet-thu-tuc-hanh-chinh.html?ma_thu_tuc=1.010101",
+      "coverage_tags": [
+        "representative_deployment",
+        "governed_provenance"
+      ],
+      "notes": "Representative DVC production-shadow source acquired with Exa and kept separate from primary training/eval use."
+    },
+    {
+      "doc_id": "shadow-dvc-faq-common-questions",
+      "title": "Câu hỏi phổ biến trên Cổng Dịch vụ công Quốc gia",
+      "doc_type": "faq",
+      "archetype": "faq",
+      "source_uri": "extracted/dichvucong/dvc-faq-common-questions.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "shadow",
+      "source_url": "https://dichvucong.gov.vn/p/home/dvc-cau-hoi-pho-bien.html",
+      "coverage_tags": [
+        "representative_deployment",
+        "governed_provenance"
+      ],
+      "notes": "Representative DVC production-shadow source acquired with Exa and kept separate from primary training/eval use."
+    }
+  ]
+}

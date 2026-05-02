@@ -1,0 +1,24 @@
+{
+  "milestone": "M5",
+  "decision": "go",
+  "checks": [
+    {
+      "name": "thin RAG baseline executed",
+      "ok": true,
+      "evidence": "thin_rag_extractive:7",
+      "details": []
+    },
+    {
+      "name": "sparse correctness measured",
+      "ok": true,
+      "evidence": "0.143",
+      "details": []
+    },
+    {
+      "name": "sparse >= 85% of thin RAG correctness",
+      "ok": true,
+      "evidence": "1.000",
+      "details": []
+    }
+  ]
+}
