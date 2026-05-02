@@ -5,13 +5,13 @@
     {
       "name": "avg tool calls <= 4",
       "ok": true,
-      "evidence": "2.000",
+      "evidence": "2.875",
       "details": []
     },
     {
       "name": "p95 tool calls <= 6",
       "ok": true,
-      "evidence": "2.000",
+      "evidence": "3.000",
       "details": []
     },
     {

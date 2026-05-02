@@ -4,7 +4,7 @@
     {
       "name": "architecture corpus ready",
       "ok": true,
-      "evidence": "corpus/architecture/manifest.json:26 docs; archetypes={'faq': 3, 'legal': 9, 'policy_sop': 7, 'table_pdf': 5, 'technical_markdown': 2}",
+      "evidence": "corpus/architecture/manifest.json:29 docs; archetypes={'faq': 3, 'legal': 12, 'policy_sop': 7, 'table_pdf': 5, 'technical_markdown': 2}",
       "details": []
     },
     {

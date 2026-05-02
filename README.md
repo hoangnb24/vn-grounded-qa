@@ -45,7 +45,8 @@ See [`docs/IMPLEMENTATION.md`](docs/IMPLEMENTATION.md) for milestones, schemas, 
 ```
 docs/
 ├── ADR-001.md          # Architecture decision record (the "why")
-└── IMPLEMENTATION.md   # Milestones, schemas, eval, risk (the "how")
+├── IMPLEMENTATION.md   # Milestones, schemas, eval, risk (the "how")
+└── COMPLETION_PLAN.md  # Current finish plan and release-gate closure path
 ```
 
 ## Status
@@ -68,8 +69,9 @@ docs/
 
 The full milestone program in `docs/IMPLEMENTATION.md` is not complete yet. See
 `docs/IMPLEMENTATION_MATRIX.md`, `docs/MILESTONE_ROADMAP.md`, and
-`docs/GOVERNED_INPUTS_RUNBOOK.md`, plus `reports/completion_audit.md`, for the
-live gap list, governed-input handoff, completion audit, and execution order.
+`docs/GOVERNED_INPUTS_RUNBOOK.md`, `docs/COMPLETION_PLAN.md`, plus
+`reports/completion_audit.md`, for the live gap list, governed-input handoff,
+completion audit, and execution order.
 The checked-in `eval/synthetic_mvp_seed.jsonl` is a seven-question smoke slice;
 use `evalset seed-synthetic` to generate the synthetic 80-question fixture.
 

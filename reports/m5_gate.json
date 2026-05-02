@@ -5,19 +5,19 @@
     {
       "name": "thin RAG baseline executed",
       "ok": true,
-      "evidence": "thin_rag_extractive:7",
+      "evidence": "thin_rag_extractive:80",
       "details": []
     },
     {
       "name": "sparse correctness measured",
       "ok": true,
-      "evidence": "0.143",
+      "evidence": "1.000",
       "details": []
     },
     {
       "name": "sparse >= 85% of thin RAG correctness",
       "ok": true,
-      "evidence": "1.000",
+      "evidence": "1.404",
       "details": []
     }
   ]

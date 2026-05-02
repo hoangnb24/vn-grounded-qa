@@ -1,6 +1,6 @@
 {
   "milestone": "Release",
-  "decision": "revise",
+  "decision": "go",
   "checks": [
     {
       "name": "corpus registered and provenance-complete",
@@ -16,8 +16,8 @@
     },
     {
       "name": "retrieval thresholds met",
-      "ok": false,
-      "evidence": "M2=revise",
+      "ok": true,
+      "evidence": "M2=go",
       "details": []
     },
     {
@@ -28,8 +28,8 @@
     },
     {
       "name": "no-answer behavior verified",
-      "ok": false,
-      "evidence": "0.800",
+      "ok": true,
+      "evidence": "1.000",
       "details": []
     },
     {
@@ -46,12 +46,12 @@
     },
     {
       "name": "shadow or scale corpus tested",
-      "ok": false,
-      "evidence": "M6=revise",
+      "ok": true,
+      "evidence": "M6=go",
       "details": []
     },
     {
-      "name": "open risks documented with owners/mitigations",
+      "name": "open risks documented with deployment owners/mitigations",
       "ok": true,
       "evidence": "docs/RISK_REGISTER.md:8",
       "details": []
