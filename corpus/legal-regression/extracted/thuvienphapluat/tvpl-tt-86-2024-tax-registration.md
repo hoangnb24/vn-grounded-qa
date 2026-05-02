@@ -24,6 +24,7 @@ archetype: legal
 - Legal basis for direct tax registration, taxpayer identifiers, and procedures under tax administration law.
 - Source highlights personal identification number use as tax code in specified cases from 2025.
 - Cross-references tax administration decrees and identity/e-authentication regulations.
+- Replacement note observed for regression testing: replaces 105/2020/TT-BTC.
 
 ## Coverage Tags
 

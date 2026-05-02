@@ -484,6 +484,63 @@
         "version_status"
       ],
       "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "tvpl-qd-443-tax-registration-process",
+      "title": "Quyết định 443/QĐ-TCT quy trình quản lý đăng ký thuế",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "../../corpus/legal-regression/extracted/thuvienphapluat/tvpl-qd-443-tax-registration-process.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Thue-Phi-Le-Phi/Quyet-dinh-443-QD-TCT-quy-trinh-quan-ly-dang-ky-thue-88294.aspx",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "tvpl-nd-43-2010-enterprise-registration-history",
+      "title": "Nghị định 43/2010/NĐ-CP đăng ký doanh nghiệp",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "../../corpus/legal-regression/extracted/thuvienphapluat/tvpl-nd-43-2010-enterprise-registration-history.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Doanh-nghiep/Nghi-dinh-43-2010-ND-CP-dang-ky-doanh-nghiep-104230.aspx",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
+    },
+    {
+      "doc_id": "tvpl-tt-21-2026-tax-admin-amendment",
+      "title": "Thông tư 21/2026/TT-BTC sửa đổi Thông tư 80/2021/TT-BTC",
+      "doc_type": "legal",
+      "archetype": "legal",
+      "source_uri": "../../corpus/legal-regression/extracted/thuvienphapluat/tvpl-tt-21-2026-tax-admin-amendment.md",
+      "format": "md",
+      "language": "vi",
+      "provenance_owner": "Kieng",
+      "license": "public-web-source-review",
+      "status": "accepted",
+      "source_url": "https://thuvienphapluat.vn/van-ban/Thue-Phi-Le-Phi/Thong-tu-21-2026-TT-BT%d0%a1-sua-doi-Thong-tu-80-2021-TT-BTC-huong-dan-Luat-Quan-ly-thue-697953.aspx?tab=1",
+      "coverage_tags": [
+        "legal_citation",
+        "cross_reference",
+        "version_status"
+      ],
+      "notes": "Exa-assisted source extraction normalized into local markdown."
     }
   ]
 }

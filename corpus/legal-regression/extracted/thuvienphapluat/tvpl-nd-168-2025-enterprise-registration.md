@@ -24,6 +24,7 @@ archetype: legal
 - Legal basis for enterprise registration, household business registration, online registration, data sharing, and registration authorities.
 - Metadata observed: issued 2025-06-30; effective status available on source page.
 - Important cross-reference: replaces older enterprise-registration decrees and references identity, tax, labor, insurance, and e-transaction laws.
+- Original/current legal-source verification remains required before production redistribution.
 
 ## Coverage Tags
 
