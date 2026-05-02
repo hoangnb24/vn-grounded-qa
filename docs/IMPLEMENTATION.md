@@ -1,7 +1,14 @@
 # Implementation Plan — Milestones, Schemas, Evaluation, Risk
 
-**Status:** Ready for implementation  
-**Date:** 2026-03-09
+**Status:** Runnable MVP implemented; controlled release blocked on governed inputs  
+**Date:** 2026-05-02
+
+The codebase now contains the sparse-first MVP shell, milestone gates, release
+gate, synthetic verification fixtures, and governed-input readiness checks.
+This plan remains the canonical completion contract. Items are only complete
+for controlled release when the governed architecture corpus, governed MVP eval
+set, legal regression pack, production shadow pack, and named deployment risk
+owners satisfy the gates.
 
 ---
 
@@ -148,9 +155,12 @@ Orchestration ceiling: max 6 total tool calls, max 2 searches, max expansion dep
 
 Every answer must include: `answer`, `citations[]`, `confidence_label` (high/medium/low/insufficient), `insufficient_evidence` flag, `used_doc_ids[]`, `used_unit_ids[]`.
 
-No-answer rules: prefer "insufficient evidence" when retrieved units don't support the conclusion, evidence is contradictory, applicable version is unclear, or question is outside corpus.
+Supported answers (`insufficient_evidence=false`) must include at least one
+citation, one used unit, and one used document.
 
-Anti-hallucination: never fabricate source anchors, never invent documents, never imply certainty when provenance is unresolved.
+No-answer rules: prefer "insufficient evidence" when retrieved units don't support the conclusion, evidence is contradictory, applicable version is unclear, or question is outside corpus. `insufficient_evidence=true` must pair with `confidence_label=insufficient`; supported answers must not use the `insufficient` confidence label.
+
+Anti-hallucination: never fabricate source anchors, never invent documents, never imply certainty when provenance is unresolved. Every citation `unit_id` must also appear in `used_unit_ids`, and every citation `doc_id` must also appear in `used_doc_ids`.
 
 ---
 
@@ -168,7 +178,7 @@ Anti-hallucination: never fabricate source anchors, never invent documents, neve
 | Version / status / exception | 10 |
 | No-answer / insufficient evidence | 10 |
 
-Rule: no more than 40% from auto-generated QA. Rest must be rewritten or human-authored.
+Rule: no more than 40% from auto-generated QA. Rest must be rewritten or human-authored and marked with `source: rewritten` or `source: human`.
 
 **Metrics:** Recall@k, answer correctness, citation exactness, hallucinated citation count, no-answer precision/recall, p50/p95 latency, tool call count, per-query cost estimate.
 
