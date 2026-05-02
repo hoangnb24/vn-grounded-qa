@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/vn-grounded-qa/answer-contract.schema.json",
+  "title": "Vietnamese Grounded QA Answer Contract",
+  "type": "object",
+  "required": [
+    "answer",
+    "citations",
+    "confidence_label",
+    "insufficient_evidence",
+    "used_doc_ids",
+    "used_unit_ids",
+    "tool_calls"
+  ],
+  "properties": {
+    "answer": {
+      "type": "string"
+    },
+    "citations": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["unit_id", "doc_id", "title", "heading_path", "page_start", "page_end"],
+        "properties": {
+          "unit_id": {"type": "string"},
+          "doc_id": {"type": "string"},
+          "title": {"type": "string"},
+          "heading_path": {"type": "string"},
+          "page_start": {"type": "integer", "minimum": 1},
+          "page_end": {"type": "integer", "minimum": 1}
+        },
+        "additionalProperties": false
+      }
+    },
+    "confidence_label": {
+      "enum": ["high", "medium", "low", "insufficient"]
+    },
+    "insufficient_evidence": {
+      "type": "boolean"
+    },
+    "used_doc_ids": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "used_unit_ids": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "tool_calls": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["tool", "args", "result_count"],
+        "properties": {
+          "tool": {"type": "string"},
+          "args": {"type": "object"},
+          "result_count": {"type": "integer", "minimum": 0}
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

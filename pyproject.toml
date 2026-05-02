@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "vn-grounded-qa"
+version = "0.1.0"
+description = "Evidence-first Vietnamese grounded QA over controlled document corpora."
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+authors = [{name = "vn-grounded-qa maintainers"}]
+dependencies = []
+
+[project.optional-dependencies]
+pdf = ["pypdf>=4"]
+docling = ["docling>=2"]
+marker = ["marker-pdf>=1"]
+parsers = ["docling>=2", "marker-pdf>=1", "pypdf>=4"]
+dev = ["pytest>=8"]
+
+[project.scripts]
+vn-grounded-qa = "vn_grounded_qa.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

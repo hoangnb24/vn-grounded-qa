@@ -1,0 +1,7 @@
+surface_form,canonical_form,lang,domain,alias_type,source
+HRM,hệ thống quản lý nhân sự,en,core,acronym,seed
+hệ thống nhân sự,HRM,vi,core,synonym,seed
+bằng chứng,evidence,vi,core,translation,seed
+trích dẫn,citation,vi,core,translation,seed
+tìm kiếm,search,vi,core,translation,seed
+truy xuất,retrieval,vi,core,translation,seed

@@ -1,0 +1,203 @@
+"""Grounded extractive answer synthesis."""
+
+from __future__ import annotations
+
+from typing import Dict, Iterable, List, Set
+
+from .models import Citation, GroundedAnswer
+from .normalize import ascii_fold, fts_query_terms
+from .tools import ToolSession
+
+STOP_TERMS: Set[str] = {
+    "ai",
+    "cai",
+    "các",
+    "cua",
+    "của",
+    "gi",
+    "gì",
+    "la",
+    "là",
+    "nao",
+    "nào",
+    "nhung",
+    "những",
+    "quy",
+    "quy định",
+    "the",
+    "thế",
+    "trong",
+    "lien",
+    "quan",
+    "den",
+    "dinh",
+    "nhan",
+    "ve",
+    "về",
+}
+
+NEGATIVE_POLICY_PATTERNS = [
+    "khong phai",
+    "khong can",
+    "khong duoc",
+    "khong yeu cau",
+    "mien",
+]
+
+POSITIVE_POLICY_PATTERNS = [
+    "phai",
+    "can",
+    "duoc",
+    "yeu cau",
+    "bat buoc",
+]
+
+
+def answer_question(session: ToolSession, question: str, top_k: int = 5) -> GroundedAnswer:
+    terms = session.resolve_terms(question)
+    hits = session.search_units(" ".join([question, *terms]), top_k=top_k)
+    selected = select_supporting_hits(question, hits, limit=5)
+    if (
+        not selected
+        or not has_sufficient_support(question, selected)
+        or has_contradictory_evidence(question, selected)
+        or has_unclear_applicable_version(selected)
+    ):
+        return GroundedAnswer(
+            answer="Không đủ bằng chứng trong kho tài liệu để trả lời câu hỏi này.",
+            citations=[],
+            confidence_label="insufficient",
+            insufficient_evidence=True,
+            used_doc_ids=[],
+            used_unit_ids=[],
+            tool_calls=session.calls,
+        )
+
+    read = session.read_units([hit["unit_id"] for hit in selected])
+    citations = [citation_from_hit(hit) for hit in read]
+    answer = synthesize_extract(read)
+    confidence = "high" if len(read) >= 2 else "medium"
+    return GroundedAnswer(
+        answer=answer,
+        citations=citations,
+        confidence_label=confidence,
+        insufficient_evidence=False,
+        used_doc_ids=sorted({hit["doc_id"] for hit in read}),
+        used_unit_ids=[hit["unit_id"] for hit in read],
+        tool_calls=session.calls,
+    )
+
+
+def has_sufficient_support(question: str, hits: List[Dict[str, object]]) -> bool:
+    terms = salient_terms(question)
+    if not terms:
+        return bool(hits)
+    evidence = ascii_fold("\n".join(str(hit["raw_text"]).lower() for hit in hits[:5]))
+    matched = {term for term in terms if term in evidence}
+    return len(matched) / len(terms) >= 0.55
+
+
+def has_contradictory_evidence(question: str, hits: List[Dict[str, object]]) -> bool:
+    terms = salient_terms(question)
+    if not terms:
+        return False
+    positive_terms: Set[str] = set()
+    negative_terms: Set[str] = set()
+    for hit in hits[:5]:
+        evidence = ascii_fold(str(hit["raw_text"]).lower())
+        matched_terms = {term for term in terms if term in evidence}
+        if not matched_terms:
+            continue
+        has_negative = any(pattern in evidence for pattern in NEGATIVE_POLICY_PATTERNS)
+        has_positive = any(pattern in evidence for pattern in POSITIVE_POLICY_PATTERNS)
+        if has_negative:
+            negative_terms.update(matched_terms)
+        if has_positive and not has_negative:
+            positive_terms.update(matched_terms)
+    return bool(positive_terms.intersection(negative_terms))
+
+
+def has_unclear_applicable_version(hits: List[Dict[str, object]]) -> bool:
+    docs_by_family: Dict[str, Set[str]] = {}
+    for hit in hits[:5]:
+        family = str(hit.get("doc_family_id") or hit.get("doc_id") or "")
+        doc_id = str(hit.get("doc_id") or "")
+        if not family or not doc_id:
+            continue
+        docs_by_family.setdefault(family, set()).add(doc_id)
+    return any(len(doc_ids) > 1 for doc_ids in docs_by_family.values())
+
+
+def select_supporting_hits(question: str, hits: List[Dict[str, object]], limit: int = 5) -> List[Dict[str, object]]:
+    terms = salient_terms(question)
+    if not terms:
+        return hits[:limit]
+    selected: List[Dict[str, object]] = []
+    covered = set()
+    for hit in hits:
+        evidence = ascii_fold(str(hit["raw_text"]).lower())
+        hit_terms = {term for term in terms if term in evidence}
+        if hit_terms - covered or not selected:
+            selected.append(hit)
+            covered.update(hit_terms)
+        if len(selected) >= limit or len(covered) == len(terms):
+            break
+    if len(selected) < min(limit, len(hits)):
+        selected_ids = {hit["unit_id"] for hit in selected}
+        for hit in hits:
+            if hit["unit_id"] not in selected_ids:
+                selected.append(hit)
+            if len(selected) >= limit:
+                break
+    return selected
+
+
+def salient_terms(question: str) -> List[str]:
+    terms = []
+    seen = set()
+    for term in fts_query_terms(ascii_fold(question)):
+        if len(term) < 3 or term in STOP_TERMS or term in seen:
+            continue
+        seen.add(term)
+        terms.append(term)
+    return terms
+
+
+def citation_from_hit(hit: Dict[str, object]) -> Citation:
+    return Citation(
+        unit_id=str(hit["unit_id"]),
+        doc_id=str(hit["doc_id"]),
+        title=str(hit["title"]),
+        heading_path=str(hit.get("heading_path") or ""),
+        page_start=int(hit["page_start"]),
+        page_end=int(hit["page_end"]),
+    )
+
+
+def synthesize_extract(hits: Iterable[Dict[str, object]]) -> str:
+    lines: List[str] = []
+    for index, hit in enumerate(hits, start=1):
+        text = compact(str(hit["raw_text"]))
+        anchor = format_anchor(hit)
+        lines.append(f"{index}. {text} ({anchor})")
+    if not lines:
+        return "Không đủ bằng chứng trong kho tài liệu để trả lời câu hỏi này."
+    return "Dựa trên các đoạn được tìm thấy:\n" + "\n".join(lines)
+
+
+def compact(text: str, limit: int = 520) -> str:
+    value = " ".join(text.split())
+    if len(value) <= limit:
+        return value
+    return value[: limit - 1].rstrip() + "..."
+
+
+def format_anchor(hit: Dict[str, object]) -> str:
+    title = str(hit["title"])
+    heading = str(hit.get("heading_path") or "").strip()
+    page_start = int(hit["page_start"])
+    page_end = int(hit["page_end"])
+    page = f"tr. {page_start}" if page_start == page_end else f"tr. {page_start}-{page_end}"
+    if heading:
+        return f"{title}, {heading}, {page}"
+    return f"{title}, {page}"
